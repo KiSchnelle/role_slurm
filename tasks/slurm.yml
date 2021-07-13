@@ -41,15 +41,27 @@
   ansible.builtin.yum:
     name: epel-release
     state: present
+  when: ansible_distribution|lower == 'centos'
 
 
-- name: Install munge dependencies.
+- name: Install munge dependencies on CentOS 7 and 8
   ansible.builtin.yum:
     name:
       - "OpenSSL"
       - "bzip2"
       - "zlib"
       - "pkgconf"
+  when: ansible_distribution|lower == 'centos'
+
+
+- name: Install munge dependencies on Ubuntu 20
+  ansible.builtin.apt:
+    name:
+      - "openssl"
+      - "bzip2"
+      - "zlib1g"
+      - "pkgconf"
+  when: ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==')
 
 
 - name: Create munge directories.
@@ -64,34 +76,34 @@
       mode: 0700
   
   - name: Create and set permissions for /var/lib/munge
-  ansible.builtin.file:
-    path: /var/lib/munge
-    state: directory
-    recurse: true
-    owner: munge
-    group: munge
-    mode: 0700
+    ansible.builtin.file:
+      path: /var/lib/munge
+      state: directory
+      recurse: true
+      owner: munge
+      group: munge
+      mode: 0700
   
-- name: Create and set permissions for /var/log/munge
-  ansible.builtin.file:
-    path: /var/log/munge
-    state: directory
-    recurse: true
-    owner: munge
-    group: munge
-    mode: 0700
+  - name: Create and set permissions for /var/log/munge
+    ansible.builtin.file:
+      path: /var/log/munge
+      state: directory
+      recurse: true
+      owner: munge
+      group: munge
+      mode: 0700
 
-- name: Create and set permissions for /run/munge # var/run/munge?
-  ansible.builtin.file:
-    path: /run/munge
-    state: directory
-    recurse: true
-    owner: munge
-    group: munge
-    mode: 0755
-    
+  - name: Create and set permissions for /run/munge # var/run/munge?
+    ansible.builtin.file:
+      path: /run/munge
+      state: directory
+      recurse: true
+      owner: munge
+      group: munge
+      mode: 0755
 
-- name: Install munge, munge-libs, munge-devel
+
+- name: Install munge on CentOS 7
   ansible.builtin.yum:
     name:
       - "munge"
@@ -99,21 +111,66 @@
       - "munge-devel"
     state: present
     update_cache: true
+  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==')
+
+
+- name: Install munge on CentOS 8
+  block:
+    - name: Install munge and munge-libs on CentOS 8
+      ansible.builtin.yum:
+        name:
+          - "munge"
+          - "munge-libs"
+        state: present
+        update_cache: true
+    
+    - name: Install munge-devel on CetnOS 8
+      ansible.builtin.dnf:
+        name: "munge-devel"
+        state: present
+        update_cache: true
+        enablerepo: 
+          - "PowerTools"
+  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==')
+
+    
+- name: Install munge on Ubuntu 20
+  ansible.builtin.apt:
+    name:
+      - "munge"
+      - "libmunge-dev"
+      - "libmunge2"
+    state: present
+    update_cache: true
+  when: ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==')
+
 
 
 - name: Create munge key.
-  ansible.builtin.shell: /usr/sbin/create-munge-key -r
-  become_user: munge
-  when: inventory_hostname in groups['slurmcontroller']
+  block:
+    - name: Install rng-tools.
+      ansible.builtin.package:
+        name: "rng-tools"
+        state: present
+    
+    - name: Create random
+      ansible.builtin.shell: rngd -r /dev/urandom
+    
+    - name: Create munge key
+      ansible.builtin.shell: /usr/sbin/create-munge-key -r -f
+    
+    - name: Copy into munge.key
+      ansible.builtin.shell: 'sh -c  "dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key"'
+  when: create_munge_key == true
 
 
-- name: Copy kefile to other nodes.
+- name: Get munge.key file from serving host.
   ansible.posix.synchronize:
     src: /etc/munge/munge.key
     dest: /etc/munge/munge.key
     mode: push
-  delegate_to: "{{ groups['slurmcontroller'][0] }}"
-  when: inventory_hostname not in groups['slurmcontroller']
+  delegate_to: "{{ munge_key_host }}"
+  when: munge_key_host is defined
 
 
 - name: Make sure munge key file correct permissions.
@@ -121,7 +178,7 @@
     path: /etc/munge/munge.key
     owner: munge
     group: munge
-    mode: 0600
+    mode: 0600 # or 0400?
 
 
 - name: Enable munge
@@ -136,25 +193,122 @@
   ansible.builtin.yum_repository:
     name: epel-release
     exclude: slurm*
+  when: ansible_distribution|lower == 'centos'
+
+
+- name: Install mariaDB on CentOS 7.
+  ansible.builtin.yum:
+    name:
+      - "mariadb-server"
+      - "mariadb-devel"
+      - "MySQL-python"
+    state: present
+    update_cache: true
+  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==') and database_server == true
+
+
+- name: Install mariaDB on CentOS 8.
+  block:
+    - name: Install mariaDB on CentOS 8.
+      ansible.builtin.yum:
+        name:
+          - "mariadb-server"
+          - "mariadb-devel"
+        state: present
+        update_cache: true
+    
+    - name: Install python3-mysql for CentOS 8.
+      ansible.builtin.dnf:
+        name: "python3-mysql"
+        state: present
+        update_cache: true
+  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==') and database_server == true
+
+
+- name: Install mariaDB on Ubuntu 20.
+  ansible.builtin.apt:
+    name:
+      - "mariadb-server"
+      - "libmariadbclient-dev"
+      - "libmariadb-dev"
+    state: present
+    update_cache: true
+  when: ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==') and database_server == true
+
+
+- name: Start and enable mariaDB.
+  ansible.builtin.systemd:
+    name: mariadb
+    state: started
+    enabled: true
+  when: database_server == true
+
+
+- name: Check if root password is set
+  shell: >
+    mysqladmin -u root status
+  changed_when: false
+  failed_when: false
+  register: root_pwd_check
+  when: database_server == true
+
+
+- name: Set MariaDB root password for the first time
+  community.mysql.mysql_user:
+    name: root
+    password: "{{ mariadb_root_password }}"
+    host_all: yes
+    state: present
+  when: root_pwd_check.rc == 0 and database_server == true
+
+
+- name: Create database for slurm.
+  community.mysql.mysql_db:
+    name: slurm_acct_db
+    state: present
+  when: database_server == true
+
+
+- name: Create slurm database user.
+  community.mysql.mysql_user:
+    name: slurm
+    state: present
+    password: "{{ mariadb_slurm_password }}"
+  when: database_server == true
+
+
+- name: Secure slurm database user access to database.
+  community.mysql.mysql_user:
+    name: slurm
+    password: "{{ mariadb_slurm_password }}"
+    priv: "slurm_acct_db.*:ALL"
+    state: present
+  when: database_server == true
 
 
 - name: Install slurm prerequisites.
   ansibel.builtin.yum:
     name:
+      - "hwloc"
       - "hwloc-devel" # for cgroup Task Affinity Plugin
       - "hdf5-devel" # for HDF5 Job Profiling Plugin
       - "man2html" # for HTML Man Pages Plugin
       - "freeipmi-devel" # for IPMI Energy Consumtion Plugin
+      - "libimad"
       - "libibmad-devel" # for InfiniBand Accounting Plugin
+      - "libibumad"
       - "libibumad-devel" # for InfiniBand Accounting Plugin
+      - "lua"
       - "lua-devel" # for Lua Support Plugin
       - "mysql-devel" # for MySQL Plugin
       - "pam-devel" # for PAM Support Plugin
+      - "numactl"
       - "numactl-devel" # for NUMA Affinity Plugin
       - "readline-devel" # for Readline Support Plugin
       - "rrdtool-devel" # for RRD External Sensor Data Collection Plugin
       - "gtk2-devel" # for sview Plugin
       - "rpm-build"
+      - "python3"
       - "gcc"
       - "openssl"
       - "openssl-devel"
@@ -169,16 +323,161 @@
       - "libjwt-devel" # for Slurm REST API
     state: present
     update_cache: true
+  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==')
 
 
-# setup mariadb path
-- name: Install mariaDB for slurm
-  ansible.builtin.yum:
+- name: Install slurm prerequisites.
+  block:
+    - name: Install slurm prerequisites for CentOS 8.
+      ansibel.builtin.yum:
+        name:
+          - "hwloc"
+          - "hdf5-devel" # for HDF5 Job Profiling Plugin
+          - "man2html" # for HTML Man Pages Plugin
+          - "freeipmi-devel" # for IPMI Energy Consumtion Plugin
+          - "libimad"
+          - "libibmad-devel" # for InfiniBand Accounting Plugin
+          - "libibumad"
+          - "libibumad-devel" # for InfiniBand Accounting Plugin
+          - "lua"
+          - "mysql-devel" # for MySQL Plugin
+          - "pam-devel" # for PAM Support Plugin
+          - "numactl"
+          - "numactl-devel" # for NUMA Affinity Plugin
+          - "readline-devel" # for Readline Support Plugin
+          - "gtk2-devel" # for sview Plugin
+          - "rpm-build"
+          - "python3"
+          - "gcc"
+          - "openssl"
+          - "openssl-devel"
+          - "ncurses-devel"
+          - "perl-Switch"
+          - "perl-ExtUtils-MakeMaker"
+          - "xorg-x11-xauth"
+          - "libssh2-devel"
+          - "http-parser-devel" # for Slurm REST API
+          - "libyaml-devel" # for Slurm REST API
+          - "json-c-devel" # for Slurm REST API
+          - "libjwt-devel" # for Slurm REST API
+        state: present
+        update_cache: true
+    
+    - name: Install slurm prerequisites for CentOS 8.
+      ansible.builtin.dnf:
+        name: 
+          - "rrdtool-devel" # for RRD External Sensor Data Collection Plugin
+          - "lua-devel" # for Lua Support Plugin
+          - "hwloc-devel" # for cgroup Task Affinity Plugin
+        state: present
+        update_cache: true
+        enablerepo: 
+          - "PowerTools"
+  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==')
+
+
+- name: Install slurm prerequisites for Ubuntu 20.
+  ansible.builtin.apt:
     name:
-      - "mariadb-server"
-      - "mariadb-devel"
+      - "debhelper"
+      - "libncurses5-dev"
+      - "po-debconf"
+      - "python3"
+      - "libgtk2.0-dev"
+      - "libpam0g-dev"
+      - "libperl-dev"
+      - "chrpath"
+      - "liblua5.3-dev"
+      - "libhwloc-dev" # should include netloc but configure doesnt find it, bug?
+      - "dh-exec"
+      - "librrd-dev"
+      - "libipmimonitoring-dev"
+      - "hdf5-helpers"
+      - "libfreeipmi-dev"
+      - "libhdf5-dev"
+      - "man2html"
+      - "libcurl4-openssl-dev"
+      - "libpmix-dev"
+      - "libhttp-parser-dev"
+      - "libyaml-dev"
+      - "libjwt-dev"
+      - "libjson-c-dev"
+      - "liblz4-dev"
+      - "libnvidia-ml-dev"
+      - "libibmad-dev"
+      - "libibumad-dev"
+      - "numactl"
+      - "libnuma-dev"
+      - "libreadline-dev"
+      - "librrd-dev"
+      - "gcc"
+      - "openssl"
+      - "make"
+      - "ruby"
+      - "ruby-dev"
     state: present
     update_cache: true
-  when: inventory_hostname in groups['slurmdatabasehost']
+  when: ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==')
+
+  
+- name: Download slurm.
+  ansible.builtin.get_url:
+    url: https://download.schedmd.com/slurm/slurm-20.11.8.tar.bz2
+    dest: /var/log/ansible/role_slurm/install/slurm-20.11.8.tar.bz2
+
+
+- name: Unarchive download.
+  ansible.builtin.unarchive:
+    src: /var/log/ansible/role_slurm/install/slurm-20.11.8.tar.bz2
+    dest: /var/log/ansible/role_slurm/install
+
+
+- name: Configure and buildt slurm.
+  ansible.builtin.shell: cd /var/log/ansible/role_slurm/install/slurm-20.11.8 && ./configure -enable-pam --enable-salloc-kill-cmd && make install && ldconfig -n /usr/lib64
+
+
+# - name: Create /var/log/slurm and set permissions.
+#   ansible.builtin.file:
+#       path: /var/log/slurm
+#       state: directory
+#       recurse: true
+#       owner: slurm
+#       group: slurm
+#       mode: 0600
+
+
+
+# sudo mkdir /var/spool/slurm
+# sudo chown slurm:slurm /var/spool/slurm
+# sudo chmod 755 /var/spool/slurm
+# sudo mkdir /var/spool/slurm/slurmctld
+# sudo chown slurm:slurm /var/spool/slurm/slurmctld
+# sudo chmod 755 /var/spool/slurm/slurmctld
+# sudo mkdir /var/spool/slurm/cluster_state
+# sudo chown slurm:slurm /var/spool/slurm/cluster_state
+# sudo touch /var/log/slurmctld.log
+# sudo chown slurm:slurm /var/log/slurmctld.log
+# sudo touch /var/log/slurm_jobacct.log /var/log/slurm_jobcomp.log
+# sudo chown slurm: /var/log/slurm_jobacct.log /var/log/slurm_jobcomp.log
+# # sudo touch /var/run/slurmctld.pid /var/run/slurmd.pid
+# # sudo chown slurm:slurm /var/run/slurmctld.pid /var/run/slurmd.pid
+# sudo mkdir -p /etc/slurm/prolog.d /etc/slurm/epilog.d 
+
+
+# make sure rights on /etc/slurm/slurmdbd.conf are 600, /var/log/slurm and /var/log/slurm/slurmdbd.log are created with user slurm
+
+# copy database template
+# restart everything
+
+
+
+
+
+
+
+
+
+# set firewall
+
 
 

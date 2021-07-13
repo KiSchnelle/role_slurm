@@ -1,16 +1,19 @@
 ---
 - name: Check OS version and family
   fail:
-    msg: "This role can only be run against CentOS 7 or Ubuntu 20. {{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported."
+    msg: "This role can only be run against CentOS 7 and 8 or Ubuntu 20. {{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported."
   when:
-    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '!=')
-    - ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '!=')
+    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version('7', '<')
+    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version('8', '>')
+    - ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version('20', '!=')
 
 - name: "Check OS version and family"
   debug:
-    msg: "PASS | This role can only be executed on CentOS 7 and Ubuntu 20 operating systems"
+    msg: "PASS | This role can only be executed on CentOS 7 and 8 and Ubuntu 20 operating systems"
   when:
-    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==')
-    - ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==')
+    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version('7', '==')
+    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version('8', '==')
+    - ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version('20', '==')
+
 
 - include_tasks: slurm.yml

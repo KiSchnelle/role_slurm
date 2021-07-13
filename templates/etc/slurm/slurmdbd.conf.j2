@@ -1,0 +1,53 @@
+#
+# Example of slurmdbd.conf
+#
+# ArchiveDir=
+ArchiveEvents=yes
+ArchiveJobs=yes
+ArchiveResvs=yes
+# ArchiveScript=
+ArchiveSteps=no
+ArchiveSuspend=no
+ArchiveTXN=no
+ArchiveUsage=no
+AuthInfo=/var/run/munge/munge.socket.2
+# AuthAltTypes=
+# AuthAltParameters=
+AuthType=auth/munge
+# CommitDelay=
+# CommunicationParameters=
+# DbdBackupHost=
+# DbdAddr=
+DbdHost={{ database_server_hostname }} # Replace by the slurmdbd server hostname (for example, slurmdbd.my.domain)
+DbdPort=6819    # The default value
+# DebugFlags=
+DebugLevel=info
+# DebugLevelSyslog=
+# DefaultQOS=
+LogFile=/var/log/slurm/slurmdbd.log
+# LogTimeFormat=
+# MaxQueryTimeRange=
+# MessageTimeout
+# Parameters
+PidFile=/var/run/slurm/slurmdbd.pid
+PluginDir=/usr/lib64/slurm
+# PrivateData=
+PurgeEventAfter=12months
+PurgeJobAfter=12months
+PurgeResvAfter=2months
+PurgeStepAfter=2months
+PurgeSuspendAfter=1month
+PurgeTXNAfter=12months
+PurgeUsageAfter=12months
+SlurmUser=slurm
+StorageHost={{ database_server_hostname }} # Replace by the storage server hostname (for example, slurmdbd.my.domain)
+# StorageBackupHost=
+StorageLoc=slurm_acct_db
+# StorageParameters=
+StoragePass={{ mariadb_slurm_password }}  # The above defined database password
+# StoragePort=
+StorageType=accounting_storage/mysql
+StorageUser=slurm
+# TCPTimeout=
+# TrackSlurmctldDown=
+# TrackWCKey=

@@ -1,0 +1,5 @@
+---
+- host: localhost
+  become: True
+  roles:
+    - role_slurm
