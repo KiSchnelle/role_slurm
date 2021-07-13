@@ -154,13 +154,16 @@
         state: present
     
     - name: Create random
-      ansible.builtin.shell: rngd -r /dev/urandom
+      # ansible.builtin.shell: rngd -r /dev/urandom
+      shell: rngd -r /dev/urandom
     
     - name: Create munge key
-      ansible.builtin.shell: /usr/sbin/create-munge-key -r -f
+      # ansible.builtin.shell: /usr/sbin/create-munge-key -r -f
+      shell: /usr/sbin/create-munge-key -r -f
     
     - name: Copy into munge.key
-      ansible.builtin.shell: 'sh -c  "dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key"'
+      # ansible.builtin.shell: 'sh -c  "dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key"'
+      shell: 'sh -c  "dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key"'
   when: create_munge_key == true
 
 
@@ -231,6 +234,7 @@
       - "mariadb-server"
       - "libmariadbclient-dev"
       - "libmariadb-dev"
+      - "python3-mysqldb"
     state: present
     update_cache: true
   when: ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==') and database_server == true
@@ -266,6 +270,8 @@
   community.mysql.mysql_db:
     name: slurm_acct_db
     state: present
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
   when: database_server == true
 
 
@@ -274,20 +280,23 @@
     name: slurm
     state: present
     password: "{{ mariadb_slurm_password }}"
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
   when: database_server == true
 
 
 - name: Secure slurm database user access to database.
   community.mysql.mysql_user:
     name: slurm
-    password: "{{ mariadb_slurm_password }}"
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
     priv: "slurm_acct_db.*:ALL"
     state: present
   when: database_server == true
 
 
 - name: Install slurm prerequisites.
-  ansibel.builtin.yum:
+  ansible.builtin.yum:
     name:
       - "hwloc"
       - "hwloc-devel" # for cgroup Task Affinity Plugin
@@ -329,7 +338,7 @@
 - name: Install slurm prerequisites.
   block:
     - name: Install slurm prerequisites for CentOS 8.
-      ansibel.builtin.yum:
+      ansible.builtin.yum:
         name:
           - "hwloc"
           - "hdf5-devel" # for HDF5 Job Profiling Plugin
@@ -423,17 +432,17 @@
 - name: Download slurm.
   ansible.builtin.get_url:
     url: https://download.schedmd.com/slurm/slurm-20.11.8.tar.bz2
-    dest: /var/log/ansible/role_slurm/install/slurm-20.11.8.tar.bz2
+    dest: /var/log/ansible/roles/role_slurm/install/slurm-20.11.8.tar.bz2
 
 
 - name: Unarchive download.
   ansible.builtin.unarchive:
-    src: /var/log/ansible/role_slurm/install/slurm-20.11.8.tar.bz2
-    dest: /var/log/ansible/role_slurm/install
+    src: /var/log/ansible/roles/role_slurm/install/slurm-20.11.8.tar.bz2
+    dest: /var/log/ansible/roles/role_slurm/install
 
 
-- name: Configure and buildt slurm.
-  ansible.builtin.shell: cd /var/log/ansible/role_slurm/install/slurm-20.11.8 && ./configure -enable-pam --enable-salloc-kill-cmd && make install && ldconfig -n /usr/lib64
+- name: Configure and build slurm.
+  ansible.builtin.shell: cd /var/log/ansible/roles/role_slurm/install/slurm-20.11.8 && ./configure -enable-pam --enable-salloc-kill-cmd && make install && ldconfig -n /usr/lib64
 
 
 # - name: Create /var/log/slurm and set permissions.

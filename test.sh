@@ -8,7 +8,8 @@ apt update
 apt upgrade --yes
 apt install software-properties-common
 add-apt-repository --yes --update ppa:ansible/ansible
-apt install ansible --yes
+apt update
+apt install ansible-base --yes
 apt install git --yes
 
 
@@ -22,17 +23,18 @@ apt install git --yes
 # create ansible user
 adduser --home /var/lib/ansible $ANSIBLE_USER
 echo $ANSIBLE_USER:$ANSIBLE_USER_PASSWORD | chpasswd
-usermod -aG wheel $ANSIBLE_USER
+# usermod -aG wheel $ANSIBLE_USER
+usermode -aG sudo $ANSIBLE_USER
 
 # create folder for stuff we need
-mkdir -p /var/log/ansible
+mkdir -p /var/log/ansible/roles
 
 
 ansible-galaxy collection install ansible.posix
 ansible-galaxy collection install community.mysql
-cd /var/log/ansible
+cd /var/log/ansible/roles
 git clone https://github.com/KiSchnelle/role_slurm.git
-cat << EOF >> /var/log/ansible/role_slurm/defaults/main.yml
+cat << EOF >> /var/log/ansible/roles/role_slurm/defaults/main.yml
 # slurm variables
 slurm_controller: true # if installed as slurm controller
 create_munge_key: true # if munge key should be generated, only needed once
@@ -48,7 +50,9 @@ EOF
 
 cd role_slurm
 mkdir install
-ansible-playbook run.yml --user=$ANSIBLE_USER --ansible_become_pass=$ANSIBLE_USER_PASSWORD >> log.txt
+cd /var/log/ansible
+mv /var/log/ansible/roles/role_slurm/run.yml .
+ansible-playbook run.yml --user=$ANSIBLE_USER --extra-vars "ansible_sudo_pass=$ANSIBLE_USER_PASSWORD" >> log.txt
 
 
 
