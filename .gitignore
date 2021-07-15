@@ -1,1 +1,5 @@
 /.DS_Store
+files/etc/slurm/scripts/epilog.task
+files/etc/slurm/scripts/prolog.task
+files/etc/slurm/scripts/slurm.epilog.clean
+files/load-sensor

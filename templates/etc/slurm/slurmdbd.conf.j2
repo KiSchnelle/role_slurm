@@ -1,7 +1,7 @@
 #
 # Example of slurmdbd.conf
 #
-# ArchiveDir=
+ArchiveDir=/var/log/slurm/archive
 ArchiveEvents=yes
 ArchiveJobs=yes
 ArchiveResvs=yes
@@ -9,7 +9,7 @@ ArchiveResvs=yes
 ArchiveSteps=no
 ArchiveSuspend=no
 ArchiveTXN=no
-ArchiveUsage=no
+ArchiveUsage=yes
 AuthInfo=/var/run/munge/munge.socket.2
 # AuthAltTypes=
 # AuthAltParameters=
@@ -18,11 +18,11 @@ AuthType=auth/munge
 # CommunicationParameters=
 # DbdBackupHost=
 # DbdAddr=
-DbdHost={{ database_server_hostname }} # Replace by the slurmdbd server hostname (for example, slurmdbd.my.domain)
+DbdHost={{ slurm_database_hostname}} # Replace by the slurmdbd server hostname (for example, slurmdbd.my.domain)
 DbdPort=6819    # The default value
 # DebugFlags=
 DebugLevel=info
-# DebugLevelSyslog=
+DebugLevelSyslog=fatal
 # DefaultQOS=
 LogFile=/var/log/slurm/slurmdbd.log
 # LogTimeFormat=
@@ -30,7 +30,7 @@ LogFile=/var/log/slurm/slurmdbd.log
 # MessageTimeout
 # Parameters
 PidFile=/var/run/slurm/slurmdbd.pid
-PluginDir=/usr/lib64/slurm
+PluginDir=/usr/lib
 # PrivateData=
 PurgeEventAfter=12months
 PurgeJobAfter=12months
@@ -40,12 +40,12 @@ PurgeSuspendAfter=1month
 PurgeTXNAfter=12months
 PurgeUsageAfter=12months
 SlurmUser=slurm
-StorageHost={{ database_server_hostname }} # Replace by the storage server hostname (for example, slurmdbd.my.domain)
+StorageHost={{ slurm_database_hostname }} # Replace by the storage server hostname (for example, slurmdbd.my.domain)
 # StorageBackupHost=
 StorageLoc=slurm_acct_db
 # StorageParameters=
 StoragePass={{ mariadb_slurm_password }}  # The above defined database password
-# StoragePort=
+StoragePort=3306
 StorageType=accounting_storage/mysql
 StorageUser=slurm
 # TCPTimeout=

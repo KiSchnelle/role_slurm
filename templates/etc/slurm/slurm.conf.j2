@@ -1,213 +1,274 @@
-AccountingStorageBackupHost=
-AccountingStorageEnforce=
-AccountingStorageExternalHost=
-AccountingStorageHost=
-AccountingStorageParameters=
-AccountingStoragePass=
-AccountingStoragePort=
-AccountingStorageTRES=
-AccountingStorageType=
-AccountingStorageUser=
-AccountingStoreJobComment=
-AcctGatherNodeFreq=
-AcctGatherEnergyType=
-AcctGatherInterconnectType=
-AcctGatherFilesystemType=
-AcctGatherProfileType=
-AllowSpecResourcesUsage=
-AuthAltTypes=
-AuthAltParameters=
-AuthInfo=
-AuthType=
-BackupAddr=
-BackupController=
-BatchStartTimeout=
-BurstBufferType=
-CliFilterPlugins=
-ClusterName=
-CommunicationParameters=
-CompleteWait=
-ControlAddr=
-ControlMachine=
-CoreSpecPlugin=
-CpuFreqDef=
-CpuFreqGovernors=
-CredType=
-DebugFlags=
-DefCpuPerGPU=
-DefMemPerCPU=
-DefMemPerGPU=
-DefMemPerNode=
-DefaultStorageHost=
-DefaultStorageLoc=
-DefaultStoragePass=
-DefaultStoragePort=
-DefaultStorageType=
-DefaultStorageUser=
-DependencyParameters=
-DisableRootJobs=
-EioTimeout=
-EnforcePartLimits=
-Epilog=
-EpilogMsgTime=
-EpilogSlurmctld=
-ExtSensorsFreq=
-ExtSensorsType=
-FairShareDampeningFactor=
-FederationParameters=
-FirstJobId=
-GetEnvTimeout=
-GresTypes=
-GroupUpdateForce=
-GroupUpdateTime=
-GpuFreqDef=
-HealthCheckInterval=
-HealthCheckNodeState=
-HealthCheckProgram=
-InactiveLimit=
-InteractiveStepOptions=
-JobAcctGatherType=
-JobAcctGatherFrequency=
-JobAcctGatherParams=
-JobCompHost=
-JobCompLoc=
-JobCompParams=
-JobCompPass=
-JobCompPort=
-JobCompType=
-JobCompUser=
-JobContainerType=
-JobFileAppend=
-JobRequeue=
-JobSubmitPlugins=
-KeepAliveTime=
-KillOnBadExit=
-KillWait=
-NodeFeaturesPlugins=
-LaunchParameters=
-LaunchType=
-Licenses=
-LogTimeFormat=
-MailDomain=
-MailProg=
-MaxArraySize=
-MaxDBDMsgs=
-MaxJobCount=
-MaxJobId=
-MaxMemPerCPU=
-MaxMemPerNode=
-MaxStepCount=
-MaxTasksPerNode=
-MCSParameters=
-MCSPlugin=
-MessageTimeout=
-MinJobAge=
-MpiDefault=
-MpiParams=
-OverTimeLimit=
-PluginDir=
-PlugStackConfig=
-PowerParameters=
-PowerPlugin=
-PreemptMode=
-PreemptType=
-PreemptExemptTime=
-PrEpParameters=
-PrEpPlugins=
-PriorityCalcPeriod=
-PriorityDecayHalfLife=
-PriorityFavorSmall=
-PriorityFlags=
-PriorityMaxAge=
-PriorityParameters=
-PrioritySiteFactorParameters=
-PrioritySiteFactorPlugin=
-PriorityType=
-PriorityUsageResetPeriod=
-PriorityWeightAge=
-PriorityWeightAssoc=
-PriorityWeightFairshare=
-PriorityWeightJobSize=
-PriorityWeightPartition=
-PriorityWeightQOS=
-PriorityWeightTRES=
-PrivateData=
-ProctrackType=
-Prolog=
-PrologEpilogTimeout=
-PrologFlags=
-PrologSlurmctld=
-PropagatePrioProcess=
-PropagateResourceLimits=
-PropagateResourceLimitsExcept=
-RebootProgram=
-ReconfigFlags=
-RequeueExit=
-RequeueExitHold=
-ResumeFailProgram=
-ResumeProgram=
-ResumeRate=
-ResumeTimeout=
-ResvEpilog=
-ResvOverRun=
-ResvProlog=
-ReturnToService=
-RoutePlugin=
-SbcastParameters=
-SchedulerParameters=
-SchedulerTimeSlice=
-SchedulerType=
-ScronParameters=
-SelectType=
-SelectTypeParameters=
-SlurmctldAddr=
-SlurmctldDebug=
-SlurmctldHost=
-SlurmctldLogFile=
-SlurmctldParameters=
-SlurmctldPidFile=
-SlurmctldPlugstack=
-SlurmctldPort=
-SlurmctldPrimaryOffProg=
-SlurmctldPrimaryOnProg=
-SlurmctldSyslogDebug=
-SlurmctldTimeout=
-SlurmdDebug=
-SlurmdLogFile=
-SlurmdParameters=
-SlurmdPidFile=
-SlurmdPort=
-SlurmdSpoolDir=
-SlurmdSyslogDebug=
-SlurmdTimeout=
-SlurmdUser=
-SlurmSchedLogFile=
-SlurmSchedLogLevel=
-SlurmUser=
-SrunEpilog=
-SrunPortRange=
-SrunProlog=
-StateSaveLocation=
-SuspendExcNodes=
-SuspendExcParts=
-SuspendProgram=
-SuspendRate=
-SuspendTime=
-SuspendTimeout=
-SwitchType=
-TaskEpilog=
-TaskPlugin=
-TaskPluginParam=
-TaskProlog=
-TCPTimeout=
-TmpFS=
-TopologyParam=
-TopologyPlugin=
-TrackWCKey=
-TreeWidth=
-UnkillableStepProgram=
-UnkillableStepTimeout=
-UsePAM=
-VSizeFactor=
-WaitTime=
-X11Parameters=
+#
+# Example of slurm.conf
+#
+# AccountingStorageBackupHost=
+AccountingStorageEnforce=associations,limits,qos
+# AccountingStorageExternalHost=
+AccountingStorageHost={{ slurm_database_hostname }}
+# AccountingStorageParameters=
+AccountingStoragePass=/var/run/munge/munge.socket.2
+AccountingStoragePort=6819
+AccountingStorageTRES=gres/gpu
+AccountingStorageType=accounting_storage/slurmdbd
+AccountingStorageUser=slurm
+AccountingStoreJobComment=YES
+#
+# AcctGatherNodeFreq=
+# AcctGatherEnergyType=acct_gather_energy/ipmi
+# AcctGatherInterconnectType=acct_gather_interconnect/ofed
+# AcctGatherFilesystemType=acct_gather_filesystem/lustre
+# AcctGatherProfileType=acct_gather_profile/hdf5
+#
+# AllowSpecResourcesUsage=
+#
+# AuthAltTypes=
+# AuthAltParameters=
+AuthInfo=/var/run/munge/munge.socket.2
+AuthType=auth/munge
+#
+# BatchStartTimeout=
+# BurstBufferType=
+# CliFilterPlugins
+#
+ClusterName={{ cluster_name }}
+#
+# CommunicationParameters=
+# CompleteWait=
+# CoreSpecPlugin=
+# CpuFreqDef=
+# CpuFreqGovernors=
+CredType=cred/munge
+# DebugFlags=
+#
+# DefCpuPerGPU=4
+# DefMemPerCPU=
+# DefMemPerGPU=
+# DefMemPerNode=
+#
+# DefaultStorageHost=
+# DefaultStorageLoc=
+# DefaultStoragePass=
+# DefaultStoragePort=
+# DefaultStorageType=
+# DefaultStorageUser=
+#
+# DependencyParameters=
+DisableRootJobs=NO
+# EioTimeout=
+EnforcePartLimits=ALL
+#
+# Epilog=
+# EpilogMsgTime=
+# EpilogSlurmctld= # this could acutally prove to be very useful
+#
+# ExtSensorsFreq=
+# ExtSensorsType=
+FairShareDampeningFactor=1
+# FederationParameters=
+FirstJobId=1
+# GetEnvTimeout=
+GresTypes=gpu
+# GroupUpdateForce=
+# GroupUpdateTime=
+# GpuFreqDef=
+#
+# HealthCheckInterval=180
+# HealthCheckNodeState=CYLCE
+# HealthCheckProgram=/etc/slurm/load-sensor  # this could be a script depending on usage
+#
+InactiveLimit=0
+# InteractiveStepOptions=
+#
+JobAcctGatherType=jobacct_gather/linux
+JobAcctGatherFrequency=30
+JobAcctGatherParams=UsePss
+JobCompHost={{ slurm_database_hostname }}
+JobCompLoc=/var/spool/slurm/acct/history 
+# JobCompParams=
+# JobCompPass=
+# JobCompPort=
+JobCompType=jobcomp/filetxt
+# JobCompUser=
+JobContainerType=job_container/none
+# JobFileAppend=
+JobRequeue=0
+# JobSubmitPlugins # could maybe be usefull
+#
+# KeepAliveTime=
+KillOnBadExit=1
+KillWait=30
+#
+# NodeFeaturesPlugins=
+# LaunchParameters=
+# LaunchType=
+#
+# Licenses=
+# LogTimeFormat=
+# MailDomain=
+# MailProg=
+# MaxArraySize=
+# MaxDBDMsgs=
+MaxJobCount=100000
+# MaxJobId
+# 
+# MaxMemPerCPU=
+# MaxMemPerNode=
+MaxStepCount=100000
+# MaxTasksPerNode=
+# 
+# MCSParameters=
+# MCSPlugin=
+#
+# MessageTimeout=
+MinJobAge=300
+MpiDefault=none
+# MpiParams=
+# OverTimeLimit=
+# PluginDir=
+# PlugStackConfig=
+#
+# PowerParameters=
+# PowerPlugin=
+#
+# PreemptMode=
+# PreemptType=
+# PreemptExemptTime=
+#
+# PrEpParameters=
+# PrEpPlugins=
+#
+# PriorityCalcPeriod=
+PriorityDecayHalfLife=7-0
+# PriorityFavorSmall=YES
+PriorityFlags=FAIR_TREE,CALCULATE_RUNNING
+# PriorityMaxAge=
+# PriorityParameters=
+# PrioritySiteFactorParameters=
+# PrioritySiteFactorPlugin=
+PriorityType=priority/multifactor
+# PriorityUsageResetPeriod=
+PriorityWeightAge=1000
+# PriorityWeightAssoc=1
+PriorityWeightFairshare=10000000
+PriorityWeightJobSize=1000
+PriorityWeightPartition=100
+# PriorityWeightQOS=
+# PriorityWeightTRES=
+#
+PrivateData=jobs,usage
+ProctrackType=proctrack/cgroup
+#
+# Prolog=
+# PrologEpilogTimeout=
+PrologFlags=contain,X11
+# PrologSlurmctld= # this could be usefull
+#
+# PropagatePrioProcess=
+# PropagateResourceLimits=
+PropagateResourceLimitsExcept=MEMLOCK
+#
+# RebootProgram=
+# ReconfigFlags=
+# RequeueExit=
+# RequeueExitHold=
+# ResumeFailProgram=
+# ResumeProgram=
+# ResumeRate=
+# ResumeTimeout=
+# ResvEpilog=
+# ResvOverRun=
+# ResvProlog=
+ReturnToService=1
+#
+# RoutePlugin=
+# SbcastParameters=
+#
+# SchedulerParameters=
+# SchedulerTimeSlice=
+SchedulerType=sched/backfill
+# ScronParameters=
+SelectType=select/cons_tres
+SelectTypeParameters=CR_Core_Memory
+#
+# SlurmctldAddr=
+SlurmctldDebug=info
+SlurmctldHost={{ slurm_controller_hostname }}
+SlurmctldLogFile=/var/log/slurm/slurmctld.log
+# SlurmctldParameters=
+SlurmctldPidFile=/var/run/slurm/slurmctld.pid
+# SlurmctldPlugstack=
+SlurmctldPort=6817
+# SlurmctldPrimaryOffProg=
+# SlurmctldPrimaryOnProg=
+SlurmctldSyslogDebug=fatal
+SlurmctldTimeout=120
+#
+SlurmdDebug=info
+SlurmdLogFile=/var/log/slurm/slurmd.log
+# SlurmdParameters=
+SlurmdPidFile=/var/run/slurm/slurmd.pid
+SlurmdPort=6818
+SlurmdSpoolDir=/var/spool/slurm/d
+SlurmdSyslogDebug=fatal
+SlurmdTimeout=300
+SlurmdUser=root
+#
+SlurmSchedLogFile=/var/log/slurm/slurmdshed.log
+SlurmSchedLogLevel=1
+SlurmUser=slurm
+#
+# SrunEpilog=
+# SrunPortRange=
+# SrunProlog=
+#
+StateSaveLocation=/var/spool/slurm/state
+#
+# SuspendExcNodes=
+# SuspendExcParts=
+# SuspendProgram=
+# SuspendRate=
+# SuspendTime=
+# SuspendTimeout=
+#
+SwitchType=switch/none
+#
+TaskEpilog=/etc/slurm/scripts/epilog.task
+TaskPlugin=task/affinity,task/cgroup
+TaskPluginParam=SlurmdOffSpec
+TaskProlog=/etc/slurm/scripts/prolog.task
+#
+# TCPTimeout=
+TmpFS=/tmp
+TopologyParam=TopoOptional
+TopologyPlugin=topology/tree
+# TrackWCKey=
+# TreeWidth=
+#
+# UnkillableStepProgram=
+UnkillableStepTimeout=120
+#
+UsePAM=1
+# VSizeFactor=
+WaitTime=0
+# X11Parameters=
+#
+#
+#
+#---------------------------------------------------------------------------------------------------------
+# COMPUTE NODES
+#---------------------------------------------------------------------------------------------------------
+NodeName=lnode[101]     RealMemory=190000  CoresPerSocket=12   Weight=1    Feature=skylake,mem185G,core16,spa,ssd    Gres=gpu:gtx1080:2
+NodeName=cnode[101]     RealMemory=190000  CoresPerSocket=12   Weight=1    Feature=skylake,mem185G,core16,spa,ssd    Gres=gpu:gtx1080:2
+#
+NodeSet=login              Nodes=lnode[101]
+NodeSet=compute            Nodes=cnode[101]
+#---------------------------------------------------------------------------------------------------------
+# PARTITION SETTINGS
+#---------------------------------------------------------------------------------------------------------
+EnforcePartLimits=YES
+#
+PartitionName=DEFAULT   State=UP    DisableRootJobs=YES MinNodes=1  MaxNodes=UNLIMITED  DefaultTime=24:00:00    MaxTime=96:00:00    MaxMemPerNode=0 OverSubscribe=NO
+PartitionName=p.cryo    State=UP    Nodes=compute   AllowQos=normal DEFAULT=YES
+#
+#
+#

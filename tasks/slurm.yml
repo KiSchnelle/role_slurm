@@ -445,39 +445,73 @@
   ansible.builtin.shell: cd /var/log/ansible/roles/role_slurm/install/slurm-20.11.8 && ./configure -enable-pam --enable-salloc-kill-cmd && make install && ldconfig -n /usr/lib64
 
 
-# - name: Create /var/log/slurm and set permissions.
-#   ansible.builtin.file:
-#       path: /var/log/slurm
-#       state: directory
-#       recurse: true
-#       owner: slurm
-#       group: slurm
-#       mode: 0600
+- name: Create slurm folders, files and set permissions.
+  ansible.builting.file:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { path: /var/log/slurm , state: directory , owner: slurm , group: slurm , mode: 0600 }
+    - { path: /var/log/slurm/archive , state: directory , owner: slurm , group: slurm , mode: 0600 }
+    - { path: /var/log/slurm/slurmbdb.log  , state: touch , owner: slurm , group: slurm , mode: 0600 }
+    - { path: /var/log/slurm/slurmctld.log , state: touch , owner: slurm , group: slurm , mode: 0600 }
+    - { path: /var/log/slurm/slurmd.log , state: touch , owner: root , group: root , mode: 0600 }
+    - { path: /var/log/slurm/slurmdshed.log , state: touch , owner: slurm , group: slurm , mode: 0600 }
+    - { path: /var/run/slurm , state: directory , owner: slurm , group: slurm , mode: 0600 }
+    - { path: /var/run/slurm/slurmdbd.pid , state: touch , owner: slurm , group: slurm , mode: 0600 }
+    - { path: /var/run/slurm/slurmctld.pid , state: touch , owner: slurm , group: slurm , mode: 0600 }
+    - { path: /var/run/slurm/slurmd.pid , state: touch , owner: root , group: root , mode: 0600 }
+    - { path: /var/spool/slurm , state: directory , owner: slurm , group: slurm , mode: 0600 }
+    - { path: /var/spool/slurm/d , state: directory , owner: root , group: root , mode: 0600 }
+    - { path: /var/spool/slurm/acct , state: directory , owner: slurm , group: slurm , mode: 0600 }
+    - { path: /var/spool/slurm/acct/history , state: touch , owner: slurm , group: slurm , mode: 0600 }
+    - { path: /var/spool/slurm/state , state: directory , owner: slurm , group: slurm , mode: 0600 }
+
+
+- name: Copy config files and set permissions.
+  ansible.builting.template:
+    path: "{{ item.path }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { path: /etc/slurm.conf.j2 , dest: /etc/slurm.conf , owner: slurm , group: slurm , mode: 0644 }
+    - { path: /etc/slurmdbd.conf.j2 , dest: /etc/slurmdbd.conf , owner: slurm , group: slurm , mode: 0600 }
+    - { path:  , dest:  , owner:  , group:  , mode:  }
+    - { path:  , dest:  , owner:  , group:  , mode:  }
+    - { path:  , dest:  , owner:  , group:  , mode:  }
+    - { path:  , dest:  , owner:  , group:  , mode:  }
+
+
+- name: Copy /etc/slurm/scripts and set permissions.
+  ansible.builtin.copy:
+    src: /etc/slurm/scripts
+    dest: /etc/slurm/scripts
+    owner: slurm
+    group: slurm
+    mode: 0755
 
 
 
-# sudo mkdir /var/spool/slurm
-# sudo chown slurm:slurm /var/spool/slurm
-# sudo chmod 755 /var/spool/slurm
-# sudo mkdir /var/spool/slurm/slurmctld
-# sudo chown slurm:slurm /var/spool/slurm/slurmctld
-# sudo chmod 755 /var/spool/slurm/slurmctld
-# sudo mkdir /var/spool/slurm/cluster_state
-# sudo chown slurm:slurm /var/spool/slurm/cluster_state
-# sudo touch /var/log/slurmctld.log
-# sudo chown slurm:slurm /var/log/slurmctld.log
-# sudo touch /var/log/slurm_jobacct.log /var/log/slurm_jobcomp.log
-# sudo chown slurm: /var/log/slurm_jobacct.log /var/log/slurm_jobcomp.log
-# # sudo touch /var/run/slurmctld.pid /var/run/slurmd.pid
-# # sudo chown slurm:slurm /var/run/slurmctld.pid /var/run/slurmd.pid
-# sudo mkdir -p /etc/slurm/prolog.d /etc/slurm/epilog.d 
 
 
-# make sure rights on /etc/slurm/slurmdbd.conf are 600, /var/log/slurm and /var/log/slurm/slurmdbd.log are created with user slurm
+
+# logrotate
+# gres.conf
+# cgroup.conf
+# topology.conf
+
 
 # copy database template
 # restart everything
 
+# wirte output from slurmd -C to slurm.conf on controller?
+# example output
+# NodeName=tlnode001 CPUs=48 Boards=1 SocketsPerBoard=2 CoresPerSocket=12 ThreadsPerCore=2 RealMemory=193261
+# UpTime=0-00:19:42
 
 
 
@@ -490,3 +524,8 @@
 
 
 
+# after all start up
+# sacctmgr add account cryo Description="Cryo users" Organization=cryo Cluster=sbcryo
+# sacctmgr add account internal Description="Internal users" Organization=internal parent=cryo
+# sacctmgr add account external Description="External users" Organization=external parent=cryo
+# sacctmgr create user ansible DefaultAccount=internal AdminLevel=Operator

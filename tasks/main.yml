@@ -15,5 +15,5 @@
     - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version('8', '==')
     - ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version('20', '==')
 
-
+# todo check for variables and print install type
 - include_tasks: slurm.yml
