@@ -11,9 +11,9 @@ add-apt-repository --yes --update ppa:ansible/ansible
 apt update
 apt install ansible-base --yes
 apt install git --yes
-adduser --home /var/lib/ansible $ANSIBLE_USER
+adduser --home /var/lib/ansible --gecos "" --disabled-password $ANSIBLE_USER
 echo $ANSIBLE_USER:$ANSIBLE_USER_PASSWORD | chpasswd
-usermode -aG sudo $ANSIBLE_USER
+usermod -aG sudo $ANSIBLE_USER
 
 # for CentOS uncomment this
 # yum update --yes
@@ -58,7 +58,7 @@ EOF
 cd role_slurm
 mkdir install
 cd /var/log/ansible
-mv /var/log/ansible/roles/role_slurm/run.yml .
+cp /var/log/ansible/roles/role_slurm/run.yml .
 ansible-playbook run.yml --user=$ANSIBLE_USER --extra-vars "ansible_sudo_pass=$ANSIBLE_USER_PASSWORD" >> log.txt
 
 

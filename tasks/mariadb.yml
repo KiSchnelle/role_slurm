@@ -8,7 +8,7 @@
       - "MySQL-python"
     state: present
     update_cache: true
-  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==') and database_server == true
+  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==')
 
 
 - name: Install mariaDB on CentOS 8.
@@ -26,7 +26,7 @@
         name: "python3-mysql"
         state: present
         update_cache: true
-  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==') and database_server == true
+  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==')
 
 
 - name: Install mariaDB on Ubuntu 20.
@@ -38,7 +38,7 @@
       - "python3-mysqldb"
     state: present
     update_cache: true
-  when: ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==') and database_server == true
+  when: ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==')
 
 
 - name: Start and enable mariaDB.
@@ -46,7 +46,6 @@
     name: mariadb
     state: started
     enabled: true
-  when: database_server == true
 
 
 - name: Check if root password is set
@@ -55,7 +54,6 @@
   changed_when: false
   failed_when: false
   register: root_pwd_check
-  when: database_server == true
 
 
 - name: Set MariaDB root password for the first time
@@ -64,7 +62,7 @@
     password: "{{ mariadb_root_password }}"
     host_all: yes
     state: present
-  when: root_pwd_check.rc == 0 and database_server == true
+  when: root_pwd_check.rc == 0
 
 
 - name: Create database for slurm.
@@ -73,7 +71,6 @@
     state: present
     login_user: root
     login_password: "{{ mariadb_root_password }}"
-  when: database_server == true
 
 
 - name: Create slurm database user.
@@ -83,7 +80,6 @@
     password: "{{ mariadb_slurm_password }}"
     login_user: root
     login_password: "{{ mariadb_root_password }}"
-  when: database_server == true
 
 
 - name: Secure slurm database user access to database.
@@ -93,4 +89,3 @@
     login_password: "{{ mariadb_root_password }}"
     priv: "slurm_acct_db.*:ALL"
     state: present
-  when: database_server == true

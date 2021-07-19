@@ -4,17 +4,17 @@
   fail:
     msg: "This role can only be run against CentOS 7 and 8 or Ubuntu 20. {{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported."
   when:
-    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version('7', '<')
-    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version('8', '>')
-    - ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version('20', '!=')
+    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '<')
+    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '>')
+    - ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '!=')
 
 - name: "Check OS version and family"
   debug:
     msg: "PASS | This role can only be executed on CentOS 7 and 8 and Ubuntu 20 operating systems"
   when:
-    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version('7', '==')
-    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version('8', '==')
-    - ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version('20', '==')
+    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==')
+    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==')
+    - ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==')
 
 
 - name: Check if munge key host is defined when install code 4 is not given.
@@ -23,7 +23,7 @@
   when: 4 not in install_code_list and munge_key_host is not defined
 
 
-- name: Check if slurm_controller_hostname and slurm_controller_ip are given when isntall code is not 3.
+- name: Check if slurm_controller_hostname and slurm_controller_ip are given when install code is not 3.
   debug:
     msg: "slurm_controller_hostname and slurm_controller_ip have to specified if not installing as controller. "
   when: 
@@ -39,7 +39,7 @@
 
 
 - include_tasks: mariadb.yml
-  when: 3 in install_code_list
+  when: 2 in install_code_list
 
 
 - include_tasks: slurm.yml
