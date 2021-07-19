@@ -151,7 +151,7 @@
 
 
 - name: Create slurm folders, files and set permissions.
-  ansible.builting.file:
+  ansible.builtin.file:
     path: "{{ item.path }}"
     state: "{{ item.state }}"
     owner: "{{ item.owner }}"
@@ -188,7 +188,7 @@
 
 
 - name: Copy config files and set permissions.
-  ansible.builting.template:
+  ansible.builtin.template:
     path: "{{ item.path }}"
     dest: "{{ item.dest }}"
     owner: "{{ item.owner }}"
