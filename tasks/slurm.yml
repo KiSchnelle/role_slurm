@@ -136,18 +136,18 @@
   
 - name: Download slurm.
   ansible.builtin.get_url:
-    url: https://download.schedmd.com/slurm/slurm-"{{ slurm_version }}".tar.bz2
-    dest: /var/log/ansible/roles/role_slurm/install/slurm-"{{ slurm_version }}".tar.bz2
+    url: 'https://download.schedmd.com/slurm/slurm-{{ slurm_version }}.tar.bz2'
+    dest: '/var/log/ansible/roles/role_slurm/install/slurm-{{ slurm_version }}.tar.bz2'
 
 
 - name: Unarchive download.
   ansible.builtin.unarchive:
-    src: /var/log/ansible/roles/role_slurm/install/slurm-"{{ slurm_version }}".tar.bz2
-    dest: /var/log/ansible/roles/role_slurm/install
+    src: '/var/log/ansible/roles/role_slurm/install/slurm-{{ slurm_version }}.tar.bz2'
+    dest: '/var/log/ansible/roles/role_slurm/install'
 
 
 - name: Configure and build slurm.
-  ansible.builtin.shell: cd /var/log/ansible/roles/role_slurm/install/slurm-"{{ slurm_version }}" && ./configure -enable-pam --enable-salloc-kill-cmd && make install && ldconfig -n /usr/lib64
+  ansible.builtin.shell: 'cd /var/log/ansible/roles/role_slurm/install/slurm-{{ slurm_version }} && ./configure -enable-pam --enable-salloc-kill-cmd && make install && ldconfig -n /usr/lib64'
 
 
 - name: Create slurm folders, files and set permissions.
