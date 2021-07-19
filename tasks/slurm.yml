@@ -199,7 +199,7 @@
 
 - name: Copy config files and set permissions.
   ansible.builtin.template:
-    path: "{{ item.path }}"
+    src: "{{ item.path }}"
     dest: "{{ item.dest }}"
     owner: "{{ item.owner }}"
     group: "{{ item.group }}"
