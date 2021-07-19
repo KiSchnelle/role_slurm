@@ -35,7 +35,7 @@
 - name: Set slurm_controller_hostname and slurm_controller_ip when install code is 3.
   ansible.builtin.set_fact:
     slurm_database_hostname: "{{ ansible_hostname }}"
-    slurm_controller_ip: "{{ ansible_facts[ansible_default_ipv4][address] }}"
+    slurm_controller_ip: "{{ ansible_facts['ansible_default_ipv4']['address'] }}"
 
 
 - name: Check if slurm_database_hostname is given when install code is not 2.
