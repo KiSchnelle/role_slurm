@@ -1,300 +1,5 @@
 ---
-- name: Add munge group
-  ansible.builtin.group:
-    name: munge
-    gid: 1005
-    state: present
-    system: false
-
-- name: Add munge user
-  ansible.builtin.user:
-    name: munge
-    uid: 1005
-    group: munge
-    create_home: true
-    home: "/var/lib/munge"
-    shell: "/sbin/nologin "
-    state: present
-    system: false
-
-
-- name: Add slurm group
-  ansible.builtin.group:
-    name: slurm
-    gid: 1006
-    state: present
-    system: false
-
-- name: Add slurm user
-  ansible.builtin.user:
-    name: slurm
-    uid: 1006
-    group: slurm
-    create_home: true
-    home: "/var/lib/slurm"
-    shell: "/bin/bash "
-    state: present
-    system: false
-
-
-- name: Make sure epel-release is installed.
-  ansible.builtin.yum:
-    name: epel-release
-    state: present
-  when: ansible_distribution|lower == 'centos'
-
-
-- name: Install munge dependencies on CentOS 7 and 8
-  ansible.builtin.yum:
-    name:
-      - "OpenSSL"
-      - "bzip2"
-      - "zlib"
-      - "pkgconf"
-  when: ansible_distribution|lower == 'centos'
-
-
-- name: Install munge dependencies on Ubuntu 20
-  ansible.builtin.apt:
-    name:
-      - "openssl"
-      - "bzip2"
-      - "zlib1g"
-      - "pkgconf"
-  when: ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==')
-
-
-- name: Create munge directories.
-  block: 
-  - name: Create and set permissions for /etc/munge
-    ansible.builtin.file:
-      path: /etc/munge
-      state: directory
-      recurse: true
-      owner: munge
-      group: munge
-      mode: 0700
-  
-  - name: Create and set permissions for /var/lib/munge
-    ansible.builtin.file:
-      path: /var/lib/munge
-      state: directory
-      recurse: true
-      owner: munge
-      group: munge
-      mode: 0700
-  
-  - name: Create and set permissions for /var/log/munge
-    ansible.builtin.file:
-      path: /var/log/munge
-      state: directory
-      recurse: true
-      owner: munge
-      group: munge
-      mode: 0700
-
-  - name: Create and set permissions for /run/munge # var/run/munge?
-    ansible.builtin.file:
-      path: /run/munge
-      state: directory
-      recurse: true
-      owner: munge
-      group: munge
-      mode: 0755
-
-
-- name: Install munge on CentOS 7
-  ansible.builtin.yum:
-    name:
-      - "munge"
-      - "munge-libs"
-      - "munge-devel"
-    state: present
-    update_cache: true
-  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==')
-
-
-- name: Install munge on CentOS 8
-  block:
-    - name: Install munge and munge-libs on CentOS 8
-      ansible.builtin.yum:
-        name:
-          - "munge"
-          - "munge-libs"
-        state: present
-        update_cache: true
-    
-    - name: Install munge-devel on CetnOS 8
-      ansible.builtin.dnf:
-        name: "munge-devel"
-        state: present
-        update_cache: true
-        enablerepo: 
-          - "PowerTools"
-  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==')
-
-    
-- name: Install munge on Ubuntu 20
-  ansible.builtin.apt:
-    name:
-      - "munge"
-      - "libmunge-dev"
-      - "libmunge2"
-    state: present
-    update_cache: true
-  when: ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==')
-
-
-
-- name: Create munge key.
-  block:
-    - name: Install rng-tools.
-      ansible.builtin.package:
-        name: "rng-tools"
-        state: present
-    
-    - name: Create random
-      # ansible.builtin.shell: rngd -r /dev/urandom
-      shell: rngd -r /dev/urandom
-    
-    - name: Create munge key
-      # ansible.builtin.shell: /usr/sbin/create-munge-key -r -f
-      shell: /usr/sbin/create-munge-key -r -f
-    
-    - name: Copy into munge.key
-      # ansible.builtin.shell: 'sh -c  "dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key"'
-      shell: 'sh -c  "dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key"'
-  when: create_munge_key == true
-
-
-- name: Get munge.key file from serving host.
-  ansible.posix.synchronize:
-    src: /etc/munge/munge.key
-    dest: /etc/munge/munge.key
-    mode: push
-  delegate_to: "{{ munge_key_host }}"
-  when: munge_key_host is defined
-
-
-- name: Make sure munge key file correct permissions.
-  ansible.builtin.file:
-    path: /etc/munge/munge.key
-    owner: munge
-    group: munge
-    mode: 0600 # or 0400?
-
-
-- name: Enable munge
-  ansible.builtin.systemd:
-    name: munge
-    state: started
-    enabled: true
-
-
-# does this make it permamently?
-- name: Exclude slurm in epel repo.
-  ansible.builtin.yum_repository:
-    name: epel-release
-    exclude: slurm*
-  when: ansible_distribution|lower == 'centos'
-
-
-- name: Install mariaDB on CentOS 7.
-  ansible.builtin.yum:
-    name:
-      - "mariadb-server"
-      - "mariadb-devel"
-      - "MySQL-python"
-    state: present
-    update_cache: true
-  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==') and database_server == true
-
-
-- name: Install mariaDB on CentOS 8.
-  block:
-    - name: Install mariaDB on CentOS 8.
-      ansible.builtin.yum:
-        name:
-          - "mariadb-server"
-          - "mariadb-devel"
-        state: present
-        update_cache: true
-    
-    - name: Install python3-mysql for CentOS 8.
-      ansible.builtin.dnf:
-        name: "python3-mysql"
-        state: present
-        update_cache: true
-  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==') and database_server == true
-
-
-- name: Install mariaDB on Ubuntu 20.
-  ansible.builtin.apt:
-    name:
-      - "mariadb-server"
-      - "libmariadbclient-dev"
-      - "libmariadb-dev"
-      - "python3-mysqldb"
-    state: present
-    update_cache: true
-  when: ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==') and database_server == true
-
-
-- name: Start and enable mariaDB.
-  ansible.builtin.systemd:
-    name: mariadb
-    state: started
-    enabled: true
-  when: database_server == true
-
-
-- name: Check if root password is set
-  shell: >
-    mysqladmin -u root status
-  changed_when: false
-  failed_when: false
-  register: root_pwd_check
-  when: database_server == true
-
-
-- name: Set MariaDB root password for the first time
-  community.mysql.mysql_user:
-    name: root
-    password: "{{ mariadb_root_password }}"
-    host_all: yes
-    state: present
-  when: root_pwd_check.rc == 0 and database_server == true
-
-
-- name: Create database for slurm.
-  community.mysql.mysql_db:
-    name: slurm_acct_db
-    state: present
-    login_user: root
-    login_password: "{{ mariadb_root_password }}"
-  when: database_server == true
-
-
-- name: Create slurm database user.
-  community.mysql.mysql_user:
-    name: slurm
-    state: present
-    password: "{{ mariadb_slurm_password }}"
-    login_user: root
-    login_password: "{{ mariadb_root_password }}"
-  when: database_server == true
-
-
-- name: Secure slurm database user access to database.
-  community.mysql.mysql_user:
-    name: slurm
-    login_user: root
-    login_password: "{{ mariadb_root_password }}"
-    priv: "slurm_acct_db.*:ALL"
-    state: present
-  when: database_server == true
-
-
+# 1=compute, 2=database, 3=controller, 4=first controller, 5=all
 - name: Install slurm prerequisites.
   ansible.builtin.yum:
     name:
@@ -431,18 +136,18 @@
   
 - name: Download slurm.
   ansible.builtin.get_url:
-    url: https://download.schedmd.com/slurm/slurm-20.11.8.tar.bz2
-    dest: /var/log/ansible/roles/role_slurm/install/slurm-20.11.8.tar.bz2
+    url: https://download.schedmd.com/slurm/slurm-"{{ slurm_version }}".tar.bz2
+    dest: /var/log/ansible/roles/role_slurm/install/slurm-"{{ slurm_version }}".tar.bz2
 
 
 - name: Unarchive download.
   ansible.builtin.unarchive:
-    src: /var/log/ansible/roles/role_slurm/install/slurm-20.11.8.tar.bz2
+    src: /var/log/ansible/roles/role_slurm/install/slurm-"{{ slurm_version }}".tar.bz2
     dest: /var/log/ansible/roles/role_slurm/install
 
 
 - name: Configure and build slurm.
-  ansible.builtin.shell: cd /var/log/ansible/roles/role_slurm/install/slurm-20.11.8 && ./configure -enable-pam --enable-salloc-kill-cmd && make install && ldconfig -n /usr/lib64
+  ansible.builtin.shell: cd /var/log/ansible/roles/role_slurm/install/slurm-"{{ slurm_version }}" && ./configure -enable-pam --enable-salloc-kill-cmd && make install && ldconfig -n /usr/lib64
 
 
 - name: Create slurm folders, files and set permissions.
@@ -453,21 +158,33 @@
     group: "{{ item.group }}"
     mode: "{{ item.mode }}"
   with_items:
-    - { path: /var/log/slurm , state: directory , owner: slurm , group: slurm , mode: 0600 }
-    - { path: /var/log/slurm/archive , state: directory , owner: slurm , group: slurm , mode: 0600 }
-    - { path: /var/log/slurm/slurmbdb.log  , state: touch , owner: slurm , group: slurm , mode: 0600 }
-    - { path: /var/log/slurm/slurmctld.log , state: touch , owner: slurm , group: slurm , mode: 0600 }
-    - { path: /var/log/slurm/slurmd.log , state: touch , owner: root , group: root , mode: 0600 }
-    - { path: /var/log/slurm/slurmdshed.log , state: touch , owner: slurm , group: slurm , mode: 0600 }
-    - { path: /var/run/slurm , state: directory , owner: slurm , group: slurm , mode: 0600 }
-    - { path: /var/run/slurm/slurmdbd.pid , state: touch , owner: slurm , group: slurm , mode: 0600 }
-    - { path: /var/run/slurm/slurmctld.pid , state: touch , owner: slurm , group: slurm , mode: 0600 }
-    - { path: /var/run/slurm/slurmd.pid , state: touch , owner: root , group: root , mode: 0600 }
-    - { path: /var/spool/slurm , state: directory , owner: slurm , group: slurm , mode: 0600 }
-    - { path: /var/spool/slurm/d , state: directory , owner: root , group: root , mode: 0600 }
-    - { path: /var/spool/slurm/acct , state: directory , owner: slurm , group: slurm , mode: 0600 }
-    - { path: /var/spool/slurm/acct/history , state: touch , owner: slurm , group: slurm , mode: 0600 }
-    - { path: /var/spool/slurm/state , state: directory , owner: slurm , group: slurm , mode: 0600 }
+    - { path: /var/log/slurm , state: directory , owner: slurm , group: slurm , mode: 0600, install: 5 }
+    - { path: /var/log/slurm/archive , state: directory , owner: slurm , group: slurm , mode: 0600, install: 2 }
+    - { path: /var/log/slurm/slurmbdb.log  , state: touch , owner: slurm , group: slurm , mode: 0600, install: 2 }
+    - { path: /var/log/slurm/slurmctld.log , state: touch , owner: slurm , group: slurm , mode: 0600, install: 3 }
+    - { path: /var/log/slurm/slurmd.log , state: touch , owner: root , group: root , mode: 0600, install:  5} # must distinct exist on each node
+    - { path: /var/log/slurm/slurmdshed.log , state: touch , owner: slurm , group: slurm , mode: 0600, install: 5 }
+    - { path: /var/run/slurm , state: directory , owner: slurm , group: slurm , mode: 0600, install: 5 }
+    - { path: /var/run/slurm/slurmdbd.pid , state: touch , owner: slurm , group: slurm , mode: 0600, install: 2 }
+    - { path: /var/run/slurm/slurmctld.pid , state: touch , owner: slurm , group: slurm , mode: 0600, install: 3 }
+    - { path: /var/run/slurm/slurmd.pid , state: touch , owner: root , group: root , mode: 0600, install: 5 } # must distinct exist on each node
+    - { path: /var/spool/slurm , state: directory , owner: slurm , group: slurm , mode: 0600, install: 5 }
+    - { path: /var/spool/slurm/d , state: directory , owner: root , group: root , mode: 0600, install: 5 } # must distinct exist on each node
+    - { path: /var/spool/slurm/acct , state: directory , owner: slurm , group: slurm , mode: 0600, install: 3 }
+    - { path: /var/spool/slurm/acct/history , state: touch , owner: slurm , group: slurm , mode: 0600, install: 3 }
+    - { path: /var/spool/slurm/state , state: directory , owner: slurm , group: slurm , mode: 0600, install: 3 }
+  when: item.install in install_code_list or item.install == 5
+
+
+- name: Register device facts.
+  block:
+    - name: Look for nvidia gpus
+      ansible.builtin.shell: "lspci | grep 'VGA compatible controller: NVIDIA' | wc -l"
+      register: number_nvidia_gpus
+    
+    - name: Look for amd gpus
+      ansible.builtin.shell: "lspci | grep 'VGA compatible controller: AMD' | wc -l"
+      register: number_amd_gpus
 
 
 - name: Copy config files and set permissions.
@@ -478,12 +195,13 @@
     group: "{{ item.group }}"
     mode: "{{ item.mode }}"
   with_items:
-    - { path: /etc/slurm.conf.j2 , dest: /etc/slurm.conf , owner: slurm , group: slurm , mode: 0644 }
-    - { path: /etc/slurmdbd.conf.j2 , dest: /etc/slurmdbd.conf , owner: slurm , group: slurm , mode: 0600 }
-    - { path:  , dest:  , owner:  , group:  , mode:  }
-    - { path:  , dest:  , owner:  , group:  , mode:  }
-    - { path:  , dest:  , owner:  , group:  , mode:  }
-    - { path:  , dest:  , owner:  , group:  , mode:  }
+    - { path: /etc/slurm/slurm.conf.j2 , dest: /etc/slurm/slurm.conf , owner: slurm , group: slurm , mode: 0644 }
+    - { path: /etc/slurm/slurmdbd.conf.j2 , dest: /etc/slurm/slurmdbd.conf , owner: slurm , group: slurm , mode: 0600 }
+    - { path: /etc/slurm/gres.conf.j2 , dest: /etc/slurm/gres.conf , owner: slurm , group: slurm , mode: 0644 }
+    - { path: /etc/slurm/cgroup.conf.j2 , dest: slurm , owner: slurm , group: slurm , mode: 0644 }
+    - { path: /etc/slurm/topology.conf.j2 , dest: /etc/slurm/topology/conf.j2 , owner: slurm , group: slurm , mode: 0644 }
+    - { path: /etc/acc_gather.conf , dest: /etc/acc_gather.conf , owner: slurm , group: slurm , mode: 0644 }
+    - { path: cgroup_allowed_devices_file.conf.j2 , dest: cgroup_allowed_devices_file.conf.j2 , owner: slurm , group: slurm , mode: 0644 }
 
 
 - name: Copy /etc/slurm/scripts and set permissions.
@@ -495,17 +213,24 @@
     mode: 0755
 
 
+- name: Copy /etc/logratate.d/slurm and set permissions.
+  ansible.builtin.copy:
+    src: /etc/logrotate.d/slurm
+    dest: /etc/logrotate.d/slurm
+    owner: root
+    gorup: root
+    mode: 0600
 
 
 
 
-# logrotate
-# gres.conf
-# cgroup.conf
-# topology.conf
 
 
-# copy database template
+
+# second controller link files to storage location
+
+
+
 # restart everything
 
 # wirte output from slurmd -C to slurm.conf on controller?

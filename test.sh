@@ -35,21 +35,23 @@ cd /var/log/ansible/roles
 git clone https://github.com/KiSchnelle/role_slurm.git
 cat << EOF >> /var/log/ansible/roles/role_slurm/defaults/main.yml
 # slurm variables, controller can be installed multiple times, first controller can also be database
-slurm_controller: true # if installed as slurm controller
-slurm_controller_hostname: $slurm_controller_hostname # needed if slurm_controller is false
-create_munge_key: true # if munge key should be generated, only needed on the first controller install
-munge_key_host: $munge_key_host_ip # host of munge key file
-database_server: true # if the node should host the slurm database
-mariadb_root_password: $mariadb_root_password # password that will be set as root password for mariadb if not existend, only needed if database_server is true
-mariadb_slurm_password: $mariadb_slurm_password # password used for mariadb slurm user, only needed if database_server is true
-
-
-slurm_database_hostname
-cluster_name
-slurm_controller_hostname
-
-
-
+# 1=compute, 2=database, 3=controller, 4=first controller
+install_code_list: [1,2,3,4]
+#
+# following neeeded if installlation is not for controller
+slurm_controller_hostname: $slurm_controller_hostname
+slurm_controller_ip: $slurm_controller_ip
+#
+# following needed if installation is not for database
+slurm_database_hostname: $slurm_controller_hostname
+#
+# following needed if installation is for database
+mariadb_root_password: $mariadb_root_password
+mariadb_slurm_password: $mariadb_slurm_password
+#
+cluster_name: $cluster_name
+slurm_version: 20.11.8 # tested for 20.11.8
+#
 EOF
 
 

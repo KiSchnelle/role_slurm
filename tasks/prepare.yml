@@ -1,0 +1,34 @@
+---
+# 1=compute, 2=database, 3=controller, 4=first controller, 5=all
+- name: Add slurm group
+  ansible.builtin.group:
+    name: slurm
+    gid: 1006
+    state: present
+    system: false
+
+- name: Add slurm user
+  ansible.builtin.user:
+    name: slurm
+    uid: 1006
+    group: slurm
+    create_home: true
+    home: "/var/lib/slurm"
+    shell: "/bin/bash "
+    state: present
+    system: false
+
+
+- name: Make sure epel-release is installed.
+  ansible.builtin.yum:
+    name: epel-release
+    state: present
+  when: ansible_distribution|lower == 'centos'
+
+
+# does this make it permamently?
+- name: Exclude slurm in epel repo.
+  ansible.builtin.yum_repository:
+    name: epel-release
+    exclude: slurm*
+  when: ansible_distribution|lower == 'centos'

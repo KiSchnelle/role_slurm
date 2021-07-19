@@ -1,4 +1,5 @@
 ---
+# 1=compute, 2=database, 3=controller, 4=first controller, 5=all
 - name: Check OS version and family
   fail:
     msg: "This role can only be run against CentOS 7 and 8 or Ubuntu 20. {{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported."
@@ -15,5 +16,30 @@
     - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version('8', '==')
     - ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version('20', '==')
 
+
+- name: Check if munge key host is defined when install code 4 is not given.
+  debug:
+    msg: "This installation was not identified as first controller and needs a given munge key host. "
+  when: 4 not in install_code_list and munge_key_host is not defined
+
+
+- name: Check if slurm_controller_hostname and slurm_controller_ip are given when isntall code is not 3.
+  debug:
+    msg: "slurm_controller_hostname and slurm_controller_ip have to specified if not installing as controller. "
+  when: 
+    - 3 not in install_code_list and slurm_controller_hostname is not defined
+    - 3 not in install_code_list and slurm_controller_ip is not defined
+
+
 # todo check for variables and print install type
+- include_tasks: prepare.yml
+
+
+- include_tasks: munge.yml
+
+
+- include_tasks: mariadb.yml
+  when: 3 in install_code_list
+
+
 - include_tasks: slurm.yml
