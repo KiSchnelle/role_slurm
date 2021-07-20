@@ -247,7 +247,7 @@
     src: etc/logrotate.d/slurm
     dest: /etc/logrotate.d/slurm
     owner: root
-    gorup: root
+    group: root
     mode: 0600
 
 
