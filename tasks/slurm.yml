@@ -309,7 +309,7 @@
 
 
 - name: Setup firewalld.
-  ansibel.posix.firewalld:
+  ansible.posix.firewalld:
     zone: trusted
     interface: "{{ ansible_facts.default_ipv4.interface }}"
     permanent: true
@@ -328,29 +328,11 @@
 
 
 
-# firewall will block connections between nodes so in case of cluster
-# with multiple nodes adapt the firewall on the compute nodes 
-#
-# sudo systemctl stop firewalld
-# sudo systemctl disable firewalld
-
-# on the master node
-#sudo firewall-cmd --permanent --zone=public --add-port=6817/udp
-#sudo firewall-cmd --permanent --zone=public --add-port=6817/tcp
-#sudo firewall-cmd --permanent --zone=public --add-port=6818/tcp
-#sudo firewall-cmd --permanent --zone=public --add-port=6818/tcp
-#sudo firewall-cmd --permanent --zone=public --add-port=7321/tcp
-#sudo firewall-cmd --permanent --zone=public --add-port=7321/tcp
-#sudo firewall-cmd --reload
-
-
 # wirte output from slurmd -C to slurm.conf on controller?
 # example output
 # NodeName=tlnode001 CPUs=48 Boards=1 SocketsPerBoard=2 CoresPerSocket=12 ThreadsPerCore=2 RealMemory=193261
 # UpTime=0-00:19:42
 
-
-# set firewall
 
 
 

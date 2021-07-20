@@ -31,6 +31,7 @@ mkdir -p /var/log/ansible/roles
 
 ansible-galaxy collection install ansible.posix
 ansible-galaxy collection install community.mysql
+ansible-galaxy collection install community.general
 cd /var/log/ansible/roles
 git clone https://github.com/KiSchnelle/role_slurm.git
 cat << EOF >> /var/log/ansible/roles/role_slurm/defaults/main.yml
