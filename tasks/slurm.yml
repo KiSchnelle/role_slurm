@@ -168,22 +168,22 @@
     group: "{{ item.group }}"
     mode: "{{ item.mode }}"
   with_items:
-    - { path: /var/log/slurm , state: directory , owner: slurm , group: slurm , mode: "0600", install: 5 }
-    - { path: /var/log/slurm/archive , state: directory , owner: slurm , group: slurm , mode: "0600", install: 2 }
+    - { path: /var/log/slurm , state: directory , owner: slurm , group: slurm , mode: "0700", install: 5 }
+    - { path: /var/log/slurm/archive , state: directory , owner: slurm , group: slurm , mode: "0700", install: 2 }
     - { path: /var/log/slurm/slurmbdb.log  , state: touch , owner: slurm , group: slurm , mode: "0600", install: 2 }
     - { path: /var/log/slurm/slurmctld.log , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
     - { path: /var/log/slurm/slurmd.log , state: touch , owner: root , group: root , mode: "0600", install:  5} # must distinct exist on each node
     - { path: /var/log/slurm/slurmdshed.log , state: touch , owner: slurm , group: slurm , mode: "0600", install: 5 }
-    - { path: /var/run/slurm , state: directory , owner: slurm , group: slurm , mode: "0600", install: 5 }
+    - { path: /var/run/slurm , state: directory , owner: slurm , group: slurm , mode: "0700", install: 5 }
     - { path: /var/run/slurm/slurmdbd.pid , state: touch , owner: slurm , group: slurm , mode: "0600", install: 2 }
     - { path: /var/run/slurm/slurmctld.pid , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
     - { path: /var/run/slurm/slurmd.pid , state: touch , owner: root , group: root , mode: "0600", install: 5 } # must distinct exist on each node
-    - { path: /var/spool/slurm , state: directory , owner: slurm , group: slurm , mode: "0600", install: 5 }
-    - { path: /var/spool/slurm/d , state: directory , owner: root , group: root , mode: "0600", install: 5 } # must distinct exist on each node
-    - { path: /var/spool/slurm/acct , state: directory , owner: slurm , group: slurm , mode: "0600", install: 3 }
+    - { path: /var/spool/slurm , state: directory , owner: slurm , group: slurm , mode: "0700", install: 5 }
+    - { path: /var/spool/slurm/d , state: directory , owner: root , group: root , mode: "0700", install: 5 } # must distinct exist on each node
+    - { path: /var/spool/slurm/acct , state: directory , owner: slurm , group: slurm , mode: "0700", install: 3 }
     - { path: /var/spool/slurm/acct/history , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
-    - { path: /var/spool/slurm/state , state: directory , owner: slurm , group: slurm , mode: "0600", install: 3 }
-    - { path: /etc/slurm , state: directory , owner: slurm , group: slurm , mode: "0644", install: 3 }
+    - { path: /var/spool/slurm/state , state: directory , owner: slurm , group: slurm , mode: "0700", install: 3 }
+    - { path: /etc/slurm , state: directory , owner: slurm , group: slurm , mode: "0755", install: 3 }
   when: item.install in install_code_list or item.install == 5
 
 
@@ -211,8 +211,25 @@
     - { path: etc/slurm/gres.conf.j2 , dest: /etc/slurm/gres.conf , owner: slurm , group: slurm , mode: "0644" }
     - { path: etc/slurm/cgroup.conf.j2 , dest: /etc/slurm/cgroup.conf , owner: slurm , group: slurm , mode: "0644" }
     - { path: etc/slurm/topology.conf.j2 , dest: /etc/slurm/topology.conf , owner: slurm , group: slurm , mode: "0644" }
-    - { path: etc/slurm/acc_gather.conf , dest: /etc/slurm/acc_gather.conf , owner: slurm , group: slurm , mode: "0644" }
-    - { path: etc/slurmcgroup_allowed_devices_file.conf.j2 , dest: /etc/slurm/cgroup_allowed_devices_file.conf , owner: slurm , group: slurm , mode: "0644" }
+    # - { path: etc/slurm/acct_gather.conf.j2 , dest: /etc/slurm/acct_gather.conf , owner: slurm , group: slurm , mode: "0644" }
+    # - { path: etc/slurm/cgroup_allowed_devices_file.conf.j2 , dest: /etc/slurm/cgroup_allowed_devices_file.conf , owner: slurm , group: slurm , mode: "0644" }
+  when: 4 in install_code_list
+
+
+- name: Get config files from slurm_controller.
+  ansible.posix.synchronize:
+    src: "{{ item.path }}"
+    dest: "{{ item.dest }}"
+    mode: push
+  with_items:
+    - { path: /etc/slurm/slurm.conf , dest: /etc/slurm/slurm.conf }
+    - { path: /etc/slurm/gres.conf , dest: /etc/slurm/gres.conf }
+    - { path: /etc/slurm/cgroup.conf , dest: /etc/slurm/cgroup.conf }
+    - { path: /etc/slurm/topology.conf , dest: /etc/slurm/topology.conf }
+    # - { path: /etc/slurm/acct_gather.conf , dest: /etc/slurm/acct_gather.conf }
+    # - { path: /etc/slurm/cgroup_allowed_devices_file.conf , dest: /etc/slurm/cgroup_allowed_devices_file.conf }
+  delegate_to: "{{ slurm_controller_ip }}"
+  when: 4 not in install_code_list
 
 
 - name: Copy /etc/slurm/scripts and set permissions.
@@ -233,27 +250,104 @@
     mode: 0600
 
 
+- name: Copy service files.
+  ansible.builtin.copy:
+    src: "etc/systemd/system/{{ item.name }}.service"
+    dest: "/etc/systemd/system/{{ item.name }}.service"
+    owner:
+    group:
+    mode:
+  with_items:
+    - {name: slurmctld , code: 3}
+    - {name: slurmdbd , code: 2}
+    - {name: slurmd , code: 5}
+  when: item.code in install_code_list
+
+
+- name: Enable and start services.
+  ansible.builtin.systemd:
+    name: "{{ item.name }}"
+    state: started
+    enabled: true
+    daemon_reload: true
+  with_items:
+    - {name: slurmd, code: 5}
+    - {name: slurmctld, code: 3}
+    - {name: slurmdbd, code: 2}
+  when: item.code in install_code_list
+
+
+# i could just use ufw for both? but most would have firewalld on redhat bases i guess
+- name: Make sure firewalld is installed.
+  ansible.builtin.package:
+    name: firewalld
+    state: present
+  when: ansible_distribution|lower == 'centos'
+
+
+- name: Make sure ufw is installed.
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+  when: ansible_distribution|lower == 'ubuntu'
+
+
+- name: Make sure firewalld is started and enabled.
+  ansible.builtin.systemd:
+    name: firewalld
+    state: started
+    enabled: true
+  when: ansible_distribution|lower == 'centos'
+
+
+- name: Make sure ufw is started and enabled.
+  ansible.builtin.systemd:
+    name: ufw
+    state: started
+    enabled: true
+  when: ansible_distribution|lower == 'ubuntu'
+
+
+- name: Setup firewalld.
+  ansibel.posix.firewalld:
+    zone: trusted
+    interface: "{{ ansible_facts.default_ipv4.interface }}"
+    permanent: true
+    immediate: true
+    enabled: true
+  when: ansible_distribution|lower == 'centos'
+
+
+- name: Setup ufw.
+  community.general.ufw:
+    interface: "{{ ansible_facts.default_ipv4.interface }}"
+    enabled: true
+    policy: allow
+  when: ansible_distribution|lower == 'ubuntu'
 
 
 
 
+# firewall will block connections between nodes so in case of cluster
+# with multiple nodes adapt the firewall on the compute nodes 
+#
+# sudo systemctl stop firewalld
+# sudo systemctl disable firewalld
 
-# second controller link files to storage location
+# on the master node
+#sudo firewall-cmd --permanent --zone=public --add-port=6817/udp
+#sudo firewall-cmd --permanent --zone=public --add-port=6817/tcp
+#sudo firewall-cmd --permanent --zone=public --add-port=6818/tcp
+#sudo firewall-cmd --permanent --zone=public --add-port=6818/tcp
+#sudo firewall-cmd --permanent --zone=public --add-port=7321/tcp
+#sudo firewall-cmd --permanent --zone=public --add-port=7321/tcp
+#sudo firewall-cmd --reload
 
-
-
-# restart everything
 
 # wirte output from slurmd -C to slurm.conf on controller?
 # example output
 # NodeName=tlnode001 CPUs=48 Boards=1 SocketsPerBoard=2 CoresPerSocket=12 ThreadsPerCore=2 RealMemory=193261
 # UpTime=0-00:19:42
-
-
-
-
-
-
 
 
 # set firewall

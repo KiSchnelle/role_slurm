@@ -57,7 +57,7 @@
       recurse: true
       owner: munge
       group: munge
-      mode: 0700
+      mode: 0711
   
   - name: Create and set permissions for /var/log/munge
     ansible.builtin.file:
@@ -68,9 +68,9 @@
       group: munge
       mode: 0700
 
-  - name: Create and set permissions for /run/munge # var/run/munge?
+  - name: Create and set permissions for /var/run/munge
     ansible.builtin.file:
-      path: /run/munge
+      path: /var/run/munge
       state: directory
       recurse: true
       owner: munge
@@ -129,16 +129,13 @@
         state: present
     
     - name: Create random
-      # ansible.builtin.shell: rngd -r /dev/urandom
-      shell: rngd -r /dev/urandom
+      ansible.builtin.shell: rngd -r /dev/urandom
     
     - name: Create munge key
-      # ansible.builtin.shell: /usr/sbin/create-munge-key -r -f
-      shell: /usr/sbin/create-munge-key -r -f
+      ansible.builtin.shell: /usr/sbin/create-munge-key -r -f
     
     - name: Copy into munge.key
-      # ansible.builtin.shell: 'sh -c  "dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key"'
-      shell: 'sh -c  "dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key"'
+      ansible.builtin.shell: 'sh -c  "dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key"'
   when: 4 in install_code_list
 
 
@@ -156,7 +153,7 @@
     path: /etc/munge/munge.key
     owner: munge
     group: munge
-    mode: 0600 # or 0400?
+    mode: 0400
 
 
 - name: Enable munge

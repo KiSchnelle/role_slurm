@@ -257,11 +257,12 @@ WaitTime=0
 #---------------------------------------------------------------------------------------------------------
 # COMPUTE NODES
 #---------------------------------------------------------------------------------------------------------
-NodeName=lnode[101]     RealMemory=190000  CoresPerSocket=12   Weight=1    Feature=skylake,mem185G,core16,spa,ssd    Gres=gpu:gtx1080:2
-NodeName=cnode[101]     RealMemory=190000  CoresPerSocket=12   Weight=1    Feature=skylake,mem185G,core16,spa,ssd    Gres=gpu:gtx1080:2
+NodeName=lnode[101]     RealMemory=190000  CoresPerSocket=12   Weight=1    Feature=skylake,mem185G  Gres=gpu:gtx1080:2
+NodeName=cnode[101]     RealMemory=190000  CoresPerSocket=12   Weight=1    Feature=skylake,mem185G  Gres=gpu:gtx1080:2
+NodeName=cnode[102-105]     RealMemory=120000  CoresPerSocket=12   Weight=1    Feature=skylake,mem128G 
 #
 NodeSet=login              Nodes=lnode[101]
-NodeSet=compute            Nodes=cnode[101]
+NodeSet=compute            Nodes=cnode[101-105]
 #---------------------------------------------------------------------------------------------------------
 # PARTITION SETTINGS
 #---------------------------------------------------------------------------------------------------------
