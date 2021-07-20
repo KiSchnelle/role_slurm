@@ -174,10 +174,10 @@
     - { path: /var/log/slurm/slurmctld.log , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
     - { path: /var/log/slurm/slurmd.log , state: touch , owner: root , group: root , mode: "0600", install:  5} # must distinct exist on each node
     - { path: /var/log/slurm/slurmdshed.log , state: touch , owner: slurm , group: slurm , mode: "0600", install: 5 }
-    - { path: /var/run/slurm , state: directory , owner: slurm , group: slurm , mode: "0700", install: 5 }
-    - { path: /var/run/slurm/slurmdbd.pid , state: touch , owner: slurm , group: slurm , mode: "0600", install: 2 }
-    - { path: /var/run/slurm/slurmctld.pid , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
-    - { path: /var/run/slurm/slurmd.pid , state: touch , owner: root , group: root , mode: "0600", install: 5 } # must distinct exist on each node
+    - { path: /run/slurm , state: directory , owner: slurm , group: slurm , mode: "0700", install: 5 }
+    - { path: /run/slurm/slurmdbd.pid , state: touch , owner: slurm , group: slurm , mode: "0600", install: 2 }
+    - { path: /run/slurm/slurmctld.pid , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
+    - { path: /run/slurm/slurmd.pid , state: touch , owner: root , group: root , mode: "0600", install: 5 } # must distinct exist on each node
     - { path: /var/spool/slurm , state: directory , owner: slurm , group: slurm , mode: "0700", install: 5 }
     - { path: /var/spool/slurm/d , state: directory , owner: root , group: root , mode: "0700", install: 5 } # must distinct exist on each node
     - { path: /var/spool/slurm/acct , state: directory , owner: slurm , group: slurm , mode: "0700", install: 3 }

@@ -206,7 +206,7 @@ SlurmctldTimeout=120
 SlurmdDebug=info
 SlurmdLogFile=/var/log/slurm/slurmd.log
 # SlurmdParameters=
-SlurmdPidFile=/var/run/slurm/slurmd.pid
+SlurmdPidFile=/run/slurm/slurmd.pid
 SlurmdPort=6818
 SlurmdSpoolDir=/var/spool/slurm/d
 SlurmdSyslogDebug=fatal
@@ -266,8 +266,6 @@ NodeSet=compute            Nodes=cnode[101-105]
 #---------------------------------------------------------------------------------------------------------
 # PARTITION SETTINGS
 #---------------------------------------------------------------------------------------------------------
-EnforcePartLimits=YES
-#
 PartitionName=DEFAULT   State=UP    DisableRootJobs=YES MinNodes=1  MaxNodes=UNLIMITED  DefaultTime=24:00:00    MaxTime=96:00:00    MaxMemPerNode=0 OverSubscribe=NO
 PartitionName=p.cryo    State=UP    Nodes=compute   AllowQos=normal DEFAULT=YES
 #
