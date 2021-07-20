@@ -156,8 +156,9 @@
 
 
 - name: Configure and build slurm.
-  ansible.builtin.shell: 'cd /var/log/ansible/roles/role_slurm/install/slurm-{{ slurm_version }} && ./configure --prefix=/usr --sysconfdir=/etc/slurm -enable-pam --enable-salloc-kill-cmd && make install && ldconfig -n /usr/lib64'
+  ansible.builtin.shell: 'cd /var/log/ansible/roles/role_slurm/install/slurm-{{ slurm_version }} && ./configure --prefix=/usr --sysconfdir=/etc/slurm -enable-pam --enable-salloc-kill-cmd --without-shared-libslurm && make install'
   when: slurm_installed is failed
+  # && ldconfig -n /usr/lib64
 
 
 - name: Create slurm folders, files and set permissions.
@@ -255,9 +256,9 @@
   ansible.builtin.copy:
     src: "etc/systemd/system/{{ item.name }}.service"
     dest: "/etc/systemd/system/{{ item.name }}.service"
-    owner:
-    group:
-    mode:
+    owner: root
+    group: root
+    mode: 0644
   with_items:
     - {name: slurmctld , code: 3}
     - {name: slurmdbd , code: 2}

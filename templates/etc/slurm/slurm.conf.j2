@@ -6,7 +6,7 @@ AccountingStorageEnforce=associations,limits,qos
 # AccountingStorageExternalHost=
 AccountingStorageHost={{ slurm_database_hostname }}
 # AccountingStorageParameters=
-AccountingStoragePass=/var/run/munge/munge.socket.2
+# AccountingStoragePass=/var/run/munge/munge.socket.2
 AccountingStoragePort=6819
 AccountingStorageTRES=gres/gpu
 AccountingStorageType=accounting_storage/slurmdbd
@@ -23,7 +23,7 @@ AccountingStoreJobComment=YES
 #
 # AuthAltTypes=
 # AuthAltParameters=
-AuthInfo=/var/run/munge/munge.socket.2
+# AuthInfo=/var/run/munge/munge.socket.2
 AuthType=auth/munge
 #
 # BatchStartTimeout=
@@ -195,7 +195,7 @@ SlurmctldDebug=info
 SlurmctldHost={{ slurm_controller_hostname }}
 SlurmctldLogFile=/var/log/slurm/slurmctld.log
 # SlurmctldParameters=
-SlurmctldPidFile=/var/run/slurm/slurmctld.pid
+SlurmctldPidFile=/run/slurm/slurmctld.pid
 # SlurmctldPlugstack=
 SlurmctldPort=6817
 # SlurmctldPrimaryOffProg=
