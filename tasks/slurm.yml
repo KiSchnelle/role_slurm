@@ -233,13 +233,13 @@
   when: 4 not in install_code_list
 
 
-- name: Copy /etc/slurm/scripts and set permissions.
-  ansible.builtin.copy:
-    src: etc/slurm/scripts/
-    dest: /etc/slurm/scripts
-    owner: slurm
-    group: slurm
-    mode: 0755
+# - name: Copy /etc/slurm/scripts and set permissions.
+#   ansible.builtin.copy:
+#     src: etc/slurm/scripts/
+#     dest: /etc/slurm/scripts
+#     owner: slurm
+#     group: slurm
+#     mode: 0755
 
 
 - name: Copy /etc/logratate.d/slurm and set permissions.
