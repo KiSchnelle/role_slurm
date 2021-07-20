@@ -262,7 +262,7 @@
     - {name: slurmctld , code: 3}
     - {name: slurmdbd , code: 2}
     - {name: slurmd , code: 5}
-  when: item.code in install_code_list
+  when: item.code in install_code_list or item.code == 5
 
 
 - name: Enable and start services.
@@ -275,7 +275,7 @@
     - {name: slurmd, code: 5}
     - {name: slurmctld, code: 3}
     - {name: slurmdbd, code: 2}
-  when: item.code in install_code_list
+  when: item.code in install_code_list or item.code == 5
 
 
 # i could just use ufw for both? but most would have firewalld on redhat bases i guess
