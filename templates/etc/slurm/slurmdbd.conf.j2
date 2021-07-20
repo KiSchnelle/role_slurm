@@ -1,7 +1,7 @@
 #
 # Example of slurmdbd.conf
 #
-ArchiveDir=/var/log/slurm/archive
+ArchiveDir=/usr/local/var/log/slurm/archive
 ArchiveEvents=yes
 ArchiveJobs=yes
 ArchiveResvs=yes
@@ -10,7 +10,7 @@ ArchiveSteps=no
 ArchiveSuspend=no
 ArchiveTXN=no
 ArchiveUsage=yes
-AuthInfo=/var/run/munge/munge.socket.2
+AuthInfo=/usr/local/var/run/munge/munge.socket.2
 # AuthAltTypes=
 # AuthAltParameters=
 AuthType=auth/munge
@@ -24,12 +24,12 @@ DbdPort=6819    # The default value
 DebugLevel=info
 DebugLevelSyslog=fatal
 # DefaultQOS=
-LogFile=/var/log/slurm/slurmdbd.log
+LogFile=/usr/local/var/log/slurm/slurmdbd.log
 # LogTimeFormat=
 # MaxQueryTimeRange=
 # MessageTimeout
 # Parameters
-PidFile=/var/run/slurm/slurmdbd.pid
+PidFile=/usr/local/var/run/slurm/slurmdbd.pid
 PluginDir=/usr/lib
 # PrivateData=
 PurgeEventAfter=12months

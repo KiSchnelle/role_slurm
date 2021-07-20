@@ -6,7 +6,7 @@ AccountingStorageEnforce=associations,limits,qos
 # AccountingStorageExternalHost=
 AccountingStorageHost={{ slurm_database_hostname }}
 # AccountingStorageParameters=
-AccountingStoragePass=/var/run/munge/munge.socket.2
+AccountingStoragePass=/usr/local/var/run/munge/munge.socket.2
 AccountingStoragePort=6819
 AccountingStorageTRES=gres/gpu
 AccountingStorageType=accounting_storage/slurmdbd
@@ -23,7 +23,7 @@ AccountingStoreJobComment=YES
 #
 # AuthAltTypes=
 # AuthAltParameters=
-AuthInfo=/var/run/munge/munge.socket.2
+AuthInfo=/usr/local/var/run/munge/munge.socket.2
 AuthType=auth/munge
 #
 # BatchStartTimeout=
@@ -74,7 +74,7 @@ GresTypes=gpu
 #
 # HealthCheckInterval=180
 # HealthCheckNodeState=CYLCE
-# HealthCheckProgram=/etc/slurm/load-sensor  # this could be a script depending on usage
+# HealthCheckProgram=/usr/local/etc/slurm/load-sensor  # this could be a script depending on usage
 #
 InactiveLimit=0
 # InteractiveStepOptions=
@@ -83,7 +83,7 @@ JobAcctGatherType=jobacct_gather/linux
 JobAcctGatherFrequency=30
 JobAcctGatherParams=UsePss
 JobCompHost={{ slurm_database_hostname }}
-JobCompLoc=/var/spool/slurm/acct/history 
+JobCompLoc=/usr/local/var/spool/slurm/acct/history 
 # JobCompParams=
 # JobCompPass=
 # JobCompPort=
@@ -193,9 +193,9 @@ SelectTypeParameters=CR_Core_Memory
 # SlurmctldAddr=
 SlurmctldDebug=info
 SlurmctldHost={{ slurm_controller_hostname }}
-SlurmctldLogFile=/var/log/slurm/slurmctld.log
+SlurmctldLogFile=/usr/local/var/log/slurm/slurmctld.log
 # SlurmctldParameters=
-SlurmctldPidFile=/var/run/slurm/slurmctld.pid
+SlurmctldPidFile=/usr/local/var/run/slurm/slurmctld.pid
 # SlurmctldPlugstack=
 SlurmctldPort=6817
 # SlurmctldPrimaryOffProg=
@@ -204,16 +204,16 @@ SlurmctldSyslogDebug=fatal
 SlurmctldTimeout=120
 #
 SlurmdDebug=info
-SlurmdLogFile=/var/log/slurm/slurmd.log
+SlurmdLogFile=/usr/local/var/log/slurm/slurmd.log
 # SlurmdParameters=
-SlurmdPidFile=/var/run/slurm/slurmd.pid
+SlurmdPidFile=/usr/local/var/run/slurm/slurmd.pid
 SlurmdPort=6818
-SlurmdSpoolDir=/var/spool/slurm/d
+SlurmdSpoolDir=/usr/local/var/spool/slurm/d
 SlurmdSyslogDebug=fatal
 SlurmdTimeout=300
 SlurmdUser=root
 #
-SlurmSchedLogFile=/var/log/slurm/slurmdshed.log
+SlurmSchedLogFile=/usr/local/var/log/slurm/slurmdshed.log
 SlurmSchedLogLevel=1
 SlurmUser=slurm
 #
@@ -221,7 +221,7 @@ SlurmUser=slurm
 # SrunPortRange=
 # SrunProlog=
 #
-StateSaveLocation=/var/spool/slurm/state
+StateSaveLocation=/usr/local/var/spool/slurm/state
 #
 # SuspendExcNodes=
 # SuspendExcParts=
@@ -232,10 +232,10 @@ StateSaveLocation=/var/spool/slurm/state
 #
 SwitchType=switch/none
 #
-# TaskEpilog=/etc/slurm/scripts/epilog.task
+# TaskEpilog=/usr/local/etc/slurm/scripts/epilog.task
 TaskPlugin=task/affinity,task/cgroup
 TaskPluginParam=SlurmdOffSpec
-# TaskProlog=/etc/slurm/scripts/prolog.task
+# TaskProlog=/usr/local/etc/slurm/scripts/prolog.task
 #
 # TCPTimeout=
 TmpFS=/tmp
