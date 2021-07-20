@@ -156,7 +156,7 @@
 
 
 - name: Configure and build slurm.
-  ansible.builtin.shell: 'cd /var/log/ansible/roles/role_slurm/install/slurm-{{ slurm_version }} && ./configure -enable-pam --enable-salloc-kill-cmd && make install && ldconfig -n /usr/lib64'
+  ansible.builtin.shell: 'cd /var/log/ansible/roles/role_slurm/install/slurm-{{ slurm_version }} && ./configure --prefix=/usr --sysconfdir=/etc/slurm -enable-pam --enable-salloc-kill-cmd && make install && ldconfig -n /usr/lib64'
   when: slurm_installed is failed
 
 
@@ -168,23 +168,23 @@
     group: "{{ item.group }}"
     mode: "{{ item.mode }}"
   with_items:
-    - { path: /usr/local/var/log/slurm , state: directory , owner: slurm , group: slurm , mode: "0700", install: 5 }
-    - { path: /usr/local/var/log/slurm/archive , state: directory , owner: slurm , group: slurm , mode: "0700", install: 2 }
-    - { path: /usr/local/var/log/slurm/slurmbdb.log  , state: touch , owner: slurm , group: slurm , mode: "0600", install: 2 }
-    - { path: /usr/local/var/log/slurm/slurmctld.log , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
-    - { path: /usr/local/var/log/slurm/slurmd.log , state: touch , owner: root , group: root , mode: "0600", install:  5} # must distinct exist on each node
-    - { path: /usr/local/var/log/slurm/slurmdshed.log , state: touch , owner: slurm , group: slurm , mode: "0600", install: 5 }
-    - { path: /usr/local/var/run/slurm , state: directory , owner: slurm , group: slurm , mode: "0700", install: 5 }
-    - { path: /usr/local/var/run/slurm/slurmdbd.pid , state: touch , owner: slurm , group: slurm , mode: "0600", install: 2 }
-    - { path: /usr/local/var/run/slurm/slurmctld.pid , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
-    - { path: /usr/local/var/run/slurm/slurmd.pid , state: touch , owner: root , group: root , mode: "0600", install: 5 } # must distinct exist on each node
-    - { path: /usr/local/var/spool/slurm , state: directory , owner: slurm , group: slurm , mode: "0700", install: 5 }
-    - { path: /usr/local/var/spool/slurm/d , state: directory , owner: root , group: root , mode: "0700", install: 5 } # must distinct exist on each node
-    - { path: /usr/local/var/spool/slurm/acct , state: directory , owner: slurm , group: slurm , mode: "0700", install: 3 }
-    - { path: /usr/local/var/spool/slurm/acct/history , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
-    - { path: /usr/local/var/spool/slurm/state , state: directory , owner: slurm , group: slurm , mode: "0700", install: 3 }
-    - { path: /usr/local/etc/slurm , state: directory , owner: slurm , group: slurm , mode: "0755", install: 5 }
-    - { path: /usr/local/etc/slurm/scripts , state: directory , owner: slurm , group: slurm , mode: "0755", install: 5 }
+    - { path: /var/log/slurm , state: directory , owner: slurm , group: slurm , mode: "0700", install: 5 }
+    - { path: /var/log/slurm/archive , state: directory , owner: slurm , group: slurm , mode: "0700", install: 2 }
+    - { path: /var/log/slurm/slurmbdb.log  , state: touch , owner: slurm , group: slurm , mode: "0600", install: 2 }
+    - { path: /var/log/slurm/slurmctld.log , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
+    - { path: /var/log/slurm/slurmd.log , state: touch , owner: root , group: root , mode: "0600", install:  5} # must distinct exist on each node
+    - { path: /var/log/slurm/slurmdshed.log , state: touch , owner: slurm , group: slurm , mode: "0600", install: 5 }
+    - { path: /var/run/slurm , state: directory , owner: slurm , group: slurm , mode: "0700", install: 5 }
+    - { path: /var/run/slurm/slurmdbd.pid , state: touch , owner: slurm , group: slurm , mode: "0600", install: 2 }
+    - { path: /var/run/slurm/slurmctld.pid , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
+    - { path: /var/run/slurm/slurmd.pid , state: touch , owner: root , group: root , mode: "0600", install: 5 } # must distinct exist on each node
+    - { path: /var/spool/slurm , state: directory , owner: slurm , group: slurm , mode: "0700", install: 5 }
+    - { path: /var/spool/slurm/d , state: directory , owner: root , group: root , mode: "0700", install: 5 } # must distinct exist on each node
+    - { path: /var/spool/slurm/acct , state: directory , owner: slurm , group: slurm , mode: "0700", install: 3 }
+    - { path: /var/spool/slurm/acct/history , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
+    - { path: /var/spool/slurm/state , state: directory , owner: slurm , group: slurm , mode: "0700", install: 3 }
+    - { path: /etc/slurm , state: directory , owner: slurm , group: slurm , mode: "0755", install: 5 }
+    - { path: /etc/slurm/scripts , state: directory , owner: slurm , group: slurm , mode: "0755", install: 5 }
   when: item.install in install_code_list or item.install == 5
 
 
@@ -207,11 +207,11 @@
     group: "{{ item.group }}"
     mode: "{{ item.mode }}"
   with_items:
-    - { path: etc/slurm/slurm.conf.j2 , dest: /usr/local/etc/slurm/slurm.conf , owner: slurm , group: slurm , mode: "0644" }
-    - { path: etc/slurm/slurmdbd.conf.j2 , dest: /usr/local/etc/slurm/slurmdbd.conf , owner: slurm , group: slurm , mode: "0600" }
-    - { path: etc/slurm/gres.conf.j2 , dest: /usr/local/etc/slurm/gres.conf , owner: slurm , group: slurm , mode: "0644" }
-    - { path: etc/slurm/cgroup.conf.j2 , dest: /usr/local/etc/slurm/cgroup.conf , owner: slurm , group: slurm , mode: "0644" }
-    - { path: etc/slurm/topology.conf.j2 , dest: /usr/local/etc/slurm/topology.conf , owner: slurm , group: slurm , mode: "0644" }
+    - { path: etc/slurm/slurm.conf.j2 , dest: /etc/slurm/slurm.conf , owner: slurm , group: slurm , mode: "0644" }
+    - { path: etc/slurm/slurmdbd.conf.j2 , dest: /etc/slurm/slurmdbd.conf , owner: slurm , group: slurm , mode: "0600" }
+    - { path: etc/slurm/gres.conf.j2 , dest: /etc/slurm/gres.conf , owner: slurm , group: slurm , mode: "0644" }
+    - { path: etc/slurm/cgroup.conf.j2 , dest: /etc/slurm/cgroup.conf , owner: slurm , group: slurm , mode: "0644" }
+    - { path: etc/slurm/topology.conf.j2 , dest: /etc/slurm/topology.conf , owner: slurm , group: slurm , mode: "0644" }
     # - { path: etc/slurm/acct_gather.conf.j2 , dest: /etc/slurm/acct_gather.conf , owner: slurm , group: slurm , mode: "0644" }
     # - { path: etc/slurm/cgroup_allowed_devices_file.conf.j2 , dest: /etc/slurm/cgroup_allowed_devices_file.conf , owner: slurm , group: slurm , mode: "0644" }
   when: 4 in install_code_list
@@ -223,10 +223,10 @@
     dest: "{{ item.dest }}"
     mode: push
   with_items:
-    - { path: /usr/local/etc/slurm/slurm.conf , dest: /usr/local/etc/slurm/slurm.conf }
-    - { path: /usr/local/etc/slurm/gres.conf , dest: /usr/local/etc/slurm/gres.conf }
-    - { path: /usr/local/etc/slurm/cgroup.conf , dest: /usr/local/etc/slurm/cgroup.conf }
-    - { path: /usr/local/etc/slurm/topology.conf , dest: /usr/local/etc/slurm/topology.conf }
+    - { path: /etc/slurm/slurm.conf , dest: /etc/slurm/slurm.conf }
+    - { path: /etc/slurm/gres.conf , dest: /etc/slurm/gres.conf }
+    - { path: /etc/slurm/cgroup.conf , dest: /etc/slurm/cgroup.conf }
+    - { path: /etc/slurm/topology.conf , dest: /etc/slurm/topology.conf }
     # - { path: /etc/slurm/acct_gather.conf , dest: /etc/slurm/acct_gather.conf }
     # - { path: /etc/slurm/cgroup_allowed_devices_file.conf , dest: /etc/slurm/cgroup_allowed_devices_file.conf }
   delegate_to: "{{ slurm_controller_ip }}"
@@ -236,7 +236,7 @@
 # - name: Copy /etc/slurm/scripts and set permissions.
 #   ansible.builtin.copy:
 #     src: etc/slurm/scripts/
-#     dest: /usr/local/etc/slurm/scripts
+#     dest: /etc/slurm/scripts
 #     owner: slurm
 #     group: slurm
 #     mode: 0755
