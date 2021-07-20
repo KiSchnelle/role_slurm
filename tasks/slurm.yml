@@ -183,7 +183,8 @@
     - { path: /var/spool/slurm/acct , state: directory , owner: slurm , group: slurm , mode: "0700", install: 3 }
     - { path: /var/spool/slurm/acct/history , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
     - { path: /var/spool/slurm/state , state: directory , owner: slurm , group: slurm , mode: "0700", install: 3 }
-    - { path: /etc/slurm , state: directory , owner: slurm , group: slurm , mode: "0755", install: 3 }
+    - { path: /etc/slurm , state: directory , owner: slurm , group: slurm , mode: "0755", install: 5 }
+    - { path: /etc/slurm/scripts , state: directory , owner: slurm , group: slurm , mode: "0755", install: 5 }
   when: item.install in install_code_list or item.install == 5
 
 
@@ -234,7 +235,7 @@
 
 - name: Copy /etc/slurm/scripts and set permissions.
   ansible.builtin.copy:
-    src: etc/slurm/scripts
+    src: etc/slurm/scripts/
     dest: /etc/slurm/scripts
     owner: slurm
     group: slurm
