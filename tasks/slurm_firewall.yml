@@ -46,9 +46,14 @@
   - name: Setup ufw.
     community.general.ufw:
       interface: "{{ ansible_facts.default_ipv4.interface }}"
-      direction:
-        - in
-        - out
+      direction: in
+      rule: allow
+      state: enabled
+  
+  - name: Setup ufw.
+    community.general.ufw:
+      interface: "{{ ansible_facts.default_ipv4.interface }}"
+      direction: out
       rule: allow
       state: enabled
   
@@ -59,15 +64,21 @@
     
     - name: Reinstall linux modules.
       ansible.builtin.apt:
-        name: "linux-modules-{{ kernel_version}}"
+        name: "linux-modules-{{ kernel_version }}"
         state: present
         update_cache: true
+
     - name: Setup ufw.
       community.general.ufw:
         interface: "{{ ansible_facts.default_ipv4.interface }}"
-        direction:
-          - in
-          - out
+        direction: in
+        rule: allow
+        state: enabled
+    
+    - name: Setup ufw.
+      community.general.ufw:
+        interface: "{{ ansible_facts.default_ipv4.interface }}"
+        direction: out
         rule: allow
         state: enabled
 
