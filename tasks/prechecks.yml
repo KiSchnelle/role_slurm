@@ -14,10 +14,10 @@
         (ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '=='))
 
 
-- name: Check if munge key host is defined when install code 4 is not given.
-  ansible.builtin.fail:
-    msg: "This installation was not identified as first controller and needs a given munge key host. "
-  when: 4 not in install_code_list and munge_key_host is not defined
+# - name: Check if munge key host is defined when install code 4 is not given.
+#   ansible.builtin.fail:
+#     msg: "This installation was not identified as first controller and needs a given munge key host. "
+#   when: 4 not in install_code_list and munge_key_host is not defined
 
 
 - name: Check if slurm_controller_hostname and slurm_controller_ip are given when install code is not 4.
