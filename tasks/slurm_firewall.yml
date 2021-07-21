@@ -64,7 +64,7 @@
     
     - name: Reinstall linux modules.
       ansible.builtin.apt:
-        name: "linux-modules-{{ kernel_version }}"
+        name: "linux-modules-{{ kernel_version.stdout_lines }}"
         state: present
         update_cache: true
 
