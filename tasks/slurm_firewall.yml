@@ -45,8 +45,10 @@
   block:
   - name: Setup ufw.
     community.general.ufw:
-      interface_in: "{{ ansible_facts.default_ipv4.interface }}"
-      interface_out: "{{ ansible_facts.default_ipv4.interface }}"
+      interface: "{{ ansible_facts.default_ipv4.interface }}"
+      direction:
+        - in
+        - out
       rule: allow
       state: enabled
   
@@ -63,7 +65,9 @@
     - name: Setup ufw.
       community.general.ufw:
         interface: "{{ ansible_facts.default_ipv4.interface }}"
-        direction: routed
+        direction:
+          - in
+          - out
         rule: allow
         state: enabled
 
