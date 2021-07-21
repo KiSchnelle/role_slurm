@@ -1,13 +1,13 @@
 ---
 - name: Install slurm-wlm package.
-  ansible.bultin.apt:
+  ansible.builtin.apt:
     name: slurm-wlm
     state: present
     update_cache: true
 
 
 - name: Install slurmdbd package.
-  ansible.bultin.apt:
+  ansible.builtin.apt:
     name: slurmdbd
     state: present
     update_cache: true
