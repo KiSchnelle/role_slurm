@@ -44,6 +44,6 @@
 - name: Setup ufw.
   community.general.ufw:
     interface: "{{ ansible_facts.default_ipv4.interface }}"
-    enabled: true
+    state: enabled
     policy: allow
   when: ansible_distribution|lower == 'ubuntu'
