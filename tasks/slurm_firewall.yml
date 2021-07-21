@@ -58,13 +58,9 @@
       state: enabled
   
   rescue:
-    - name: Get kernel version
-      ansible.builtin.shell: uname -r
-      register: kernel_version
-    
     - name: Reinstall linux modules.
       ansible.builtin.apt:
-        name: "linux-modules-{{ kernel_version.stdout_lines }}"
+        name: "linux-modules-{{ ansible_kernel }}"
         state: present
         update_cache: true
 
