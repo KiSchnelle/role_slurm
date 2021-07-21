@@ -45,7 +45,7 @@
 
 
 # Setup database for slurm.
-- include_tasks: mariadb.yml
+- include_tasks: mariadb_slurm.yml
   when: 2 in install_code_list
 
 
