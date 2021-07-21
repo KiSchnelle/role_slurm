@@ -2,18 +2,16 @@
 - name: Check OS version and family
   ansible.builtin.fail:
     msg: "This role can only be run against CentOS 7 and 8 or Ubuntu 20. {{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported."
-  when:
-    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '<')
-    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '>')
-    - ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '!=')
+  when: (ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '<')) or
+        (ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '>')) or
+        (ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '!='))
 
 - name: "Check OS version and family"
   ansible.builtin.debug:
     msg: "PASS | This role can only be executed on CentOS 7 and 8 and Ubuntu 20 operating systems"
-  when:
-    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==')
-    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==')
-    - ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==')
+  when: (ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==')) or
+        (ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==')) or
+        (ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '=='))
 
 
 - name: Check if munge key host is defined when install code 4 is not given.

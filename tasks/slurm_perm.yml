@@ -81,7 +81,9 @@
     - {name: slurmctld , code: 3}
     - {name: slurmdbd , code: 2}
     - {name: slurmd , code: 5}
-  when: item.code in install_code_list or item.code == 5 and not package_install
+  when:
+    - item.code in install_code_list or item.code == 5
+    - not package_install
 
 
 - name: Copy /etc/default/ files.
@@ -95,7 +97,9 @@
     - {name: slurmctld , code: 3}
     - {name: slurmdbd , code: 2}
     - {name: slurmd , code: 5}
-  when: item.code in install_code_list or item.code == 5 and not package_install
+  when:
+    - item.code in install_code_list or item.code == 5
+    - not package_install
 
 
 # copy init.d files? gotta change them?
@@ -111,4 +115,6 @@
     - {name: slurmctld , code: 3}
     - {name: slurmdbd , code: 2}
     - {name: slurmd , code: 5}
-  when: item.code in install_code_list or item.code == 5 and not package_install
+  when:
+    - item.code in install_code_list or item.code == 5
+    - not package_install
