@@ -1,0 +1,37 @@
+---
+- name: Add munge group
+  ansible.builtin.group:
+    name: munge
+    gid: 1005
+    state: present
+    system: false
+
+- name: Add munge user
+  ansible.builtin.user:
+    name: munge
+    uid: 1005
+    group: munge
+    create_home: true
+    home: "/var/lib/munge"
+    shell: "/sbin/nologin "
+    state: present
+    system: false
+
+
+- name: Add slurm group
+  ansible.builtin.group:
+    name: slurm
+    gid: 1006
+    state: present
+    system: false
+
+- name: Add slurm user
+  ansible.builtin.user:
+    name: slurm
+    uid: 1006
+    group: slurm
+    create_home: true
+    home: "/var/lib/slurm"
+    shell: "/bin/bash "
+    state: present
+    system: false

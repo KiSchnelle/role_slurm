@@ -1,0 +1,38 @@
+---
+- name: Create munge directories.
+  block: 
+  - name: Create and set permissions for /etc/munge
+    ansible.builtin.file:
+      path: /etc/munge
+      state: directory
+      recurse: true
+      owner: munge
+      group: munge
+      mode: 0700
+  
+  - name: Create and set permissions for /var/lib/munge
+    ansible.builtin.file:
+      path: /var/lib/munge
+      state: directory
+      recurse: true
+      owner: munge
+      group: munge
+      mode: 0711
+  
+  - name: Create and set permissions for /var/log/munge
+    ansible.builtin.file:
+      path: /var/log/munge
+      state: directory
+      recurse: true
+      owner: munge
+      group: munge
+      mode: 0700
+
+  - name: Create and set permissions for /var/run/munge
+    ansible.builtin.file:
+      path: /var/run/munge
+      state: directory
+      recurse: true
+      owner: munge
+      group: munge
+      mode: 0755

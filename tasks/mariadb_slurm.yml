@@ -1,0 +1,26 @@
+---
+# 1=compute, 2=database, 3=controller, 4=first controller, 5=all
+- name: Create database for slurm.
+  community.mysql.mysql_db:
+    name: slurm_acct_db
+    state: present
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+
+
+- name: Create slurm database user.
+  community.mysql.mysql_user:
+    name: slurm
+    state: present
+    password: "{{ mariadb_slurm_password }}"
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+
+
+- name: Secure slurm database user access to database.
+  community.mysql.mysql_user:
+    name: slurm
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+    priv: "slurm_acct_db.*:ALL"
+    state: present

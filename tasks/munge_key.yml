@@ -1,0 +1,35 @@
+---
+# 1=compute, 2=database, 3=controller, 4=first controller, 5=all
+- name: Create munge key.
+  block:
+    - name: Install rng-tools.
+      ansible.builtin.package:
+        name: "rng-tools"
+        state: present
+    
+    - name: Create random
+      ansible.builtin.shell: rngd -r /dev/urandom
+    
+    - name: Create munge key
+      ansible.builtin.shell: /usr/sbin/create-munge-key -r -f
+    
+    - name: Copy into munge.key
+      ansible.builtin.shell: 'sh -c  "dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key"'
+  when: 4 in install_code_list
+
+
+- name: Get munge.key file from serving host.
+  ansible.posix.synchronize:
+    src: /etc/munge/munge.key
+    dest: /etc/munge/munge.key
+    mode: push
+  delegate_to: "{{ slurm_controller_ip }}"
+  when: 4 not in install_code_list
+
+
+- name: Make sure munge key file correct permissions.
+  ansible.builtin.file:
+    path: /etc/munge/munge.key
+    owner: munge
+    group: munge
+    mode: 0400

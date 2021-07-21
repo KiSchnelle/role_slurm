@@ -1,0 +1,23 @@
+---
+- name: Start and enable mariaDB.
+  ansible.builtin.systemd:
+    name: mariadb
+    state: started
+    enabled: true
+
+
+- name: Check if root password is set
+  shell: >
+    mysqladmin -u root status
+  changed_when: false
+  failed_when: false
+  register: mariadb_root_pwd_check
+
+
+- name: Set MariaDB root password for the first time
+  community.mysql.mysql_user:
+    name: root
+    password: "{{ mariadb_root_password }}"
+    host_all: yes
+    state: present
+  when: mariadb_root_pwd_check.rc == 0

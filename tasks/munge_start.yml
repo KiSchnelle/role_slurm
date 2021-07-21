@@ -1,0 +1,7 @@
+---
+- name: Enable munge and restart munge service.
+  ansible.builtin.systemd:
+    name: munge
+    state: restarted
+    enabled: true
+    daemon_reload: true

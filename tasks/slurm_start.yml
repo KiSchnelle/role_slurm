@@ -1,0 +1,39 @@
+---
+# 1=compute, 2=database, 3=controller, 4=first controller, 5=all
+- name: Enable and start services.
+  ansible.builtin.systemd:
+    name: "{{ item.name }}"
+    state: started
+    enabled: true
+    daemon_reload: true
+  with_items:
+    - {name: slurmdbd, code: 2}
+    - {name: slurmctld, code: 3}
+    - {name: slurmd, code: 5}
+  when: item.code in install_code_list or item.code == 5
+
+
+# - name: Register device facts.
+#   block:
+#     - name: Look for nvidia gpus
+#       ansible.builtin.shell: "lspci | grep 'VGA compatible controller: NVIDIA' | wc -l"
+#       register: number_nvidia_gpus
+    
+#     - name: Look for amd gpus
+#       ansible.builtin.shell: "lspci | grep 'VGA compatible controller: AMD' | wc -l"
+#       register: number_amd_gpus
+
+
+# wirte output from slurmd -C to slurm.conf on controller?
+# example output
+# NodeName=tlnode001 CPUs=48 Boards=1 SocketsPerBoard=2 CoresPerSocket=12 ThreadsPerCore=2 RealMemory=193261
+# UpTime=0-00:19:42
+
+
+
+
+# after all start up
+# sacctmgr add account cryo Description="Cryo users" Organization=cryo Cluster=sbcryo
+# sacctmgr add account internal Description="Internal users" Organization=internal parent=cryo
+# sacctmgr add account external Description="External users" Organization=external parent=cryo
+# sacctmgr create user ansible DefaultAccount=internal AdminLevel=Operator

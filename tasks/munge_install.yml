@@ -1,0 +1,41 @@
+---
+- name: Install munge on CentOS 7
+  ansible.builtin.yum:
+    name:
+      - "munge"
+      - "munge-libs"
+      - "munge-devel"
+    state: present
+    update_cache: true
+  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==')
+
+
+- name: Install munge on CentOS 8
+  block:
+    - name: Install munge and munge-libs on CentOS 8
+      ansible.builtin.yum:
+        name:
+          - "munge"
+          - "munge-libs"
+        state: present
+        update_cache: true
+    
+    - name: Install munge-devel on CetnOS 8
+      ansible.builtin.dnf:
+        name: "munge-devel"
+        state: present
+        update_cache: true
+        enablerepo: 
+          - "PowerTools"
+  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==')
+
+    
+- name: Install munge on Ubuntu 20
+  ansible.builtin.apt:
+    name:
+      - "munge"
+      - "libmunge-dev"
+      - "libmunge2"
+    state: present
+    update_cache: true
+  when: ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==')

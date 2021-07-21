@@ -1,0 +1,133 @@
+---
+- name: Install slurm prerequisites.
+  ansible.builtin.yum:
+    name:
+      - "hwloc"
+      - "hwloc-devel" # for cgroup Task Affinity Plugin
+      - "hdf5-devel" # for HDF5 Job Profiling Plugin
+      - "man2html" # for HTML Man Pages Plugin
+      - "freeipmi-devel" # for IPMI Energy Consumtion Plugin
+      - "libimad"
+      - "libibmad-devel" # for InfiniBand Accounting Plugin
+      - "libibumad"
+      - "libibumad-devel" # for InfiniBand Accounting Plugin
+      - "lua"
+      - "lua-devel" # for Lua Support Plugin
+      - "mysql-devel" # for MySQL Plugin
+      - "pam-devel" # for PAM Support Plugin
+      - "numactl"
+      - "numactl-devel" # for NUMA Affinity Plugin
+      - "readline-devel" # for Readline Support Plugin
+      - "rrdtool-devel" # for RRD External Sensor Data Collection Plugin
+      - "gtk2-devel" # for sview Plugin
+      - "rpm-build"
+      - "python3"
+      - "gcc"
+      - "openssl"
+      - "openssl-devel"
+      - "ncurses-devel"
+      - "perl-Switch"
+      - "perl-ExtUtils-MakeMaker"
+      - "xorg-x11-xauth"
+      - "libssh2-devel"
+      - "http-parser-devel" # for Slurm REST API
+      - "libyaml-devel" # for Slurm REST API
+      - "json-c-devel" # for Slurm REST API
+      - "libjwt-devel" # for Slurm REST API
+    state: present
+    update_cache: true
+  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==')
+
+
+- name: Install slurm prerequisites.
+  block:
+    - name: Install slurm prerequisites for CentOS 8.
+      ansible.builtin.yum:
+        name:
+          - "hwloc"
+          - "hdf5-devel" # for HDF5 Job Profiling Plugin
+          - "man2html" # for HTML Man Pages Plugin
+          - "freeipmi-devel" # for IPMI Energy Consumtion Plugin
+          - "libimad"
+          - "libibmad-devel" # for InfiniBand Accounting Plugin
+          - "libibumad"
+          - "libibumad-devel" # for InfiniBand Accounting Plugin
+          - "lua"
+          - "mysql-devel" # for MySQL Plugin
+          - "pam-devel" # for PAM Support Plugin
+          - "numactl"
+          - "numactl-devel" # for NUMA Affinity Plugin
+          - "readline-devel" # for Readline Support Plugin
+          - "gtk2-devel" # for sview Plugin
+          - "rpm-build"
+          - "python3"
+          - "gcc"
+          - "openssl"
+          - "openssl-devel"
+          - "ncurses-devel"
+          - "perl-Switch"
+          - "perl-ExtUtils-MakeMaker"
+          - "xorg-x11-xauth"
+          - "libssh2-devel"
+          - "http-parser-devel" # for Slurm REST API
+          - "libyaml-devel" # for Slurm REST API
+          - "json-c-devel" # for Slurm REST API
+          - "libjwt-devel" # for Slurm REST API
+        state: present
+        update_cache: true
+    
+    - name: Install slurm prerequisites for CentOS 8.
+      ansible.builtin.dnf:
+        name: 
+          - "rrdtool-devel" # for RRD External Sensor Data Collection Plugin
+          - "lua-devel" # for Lua Support Plugin
+          - "hwloc-devel" # for cgroup Task Affinity Plugin
+        state: present
+        update_cache: true
+        enablerepo: 
+          - "PowerTools"
+  when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==')
+
+
+- name: Install slurm prerequisites for Ubuntu 20.
+  ansible.builtin.apt:
+    name:
+      - "debhelper"
+      - "libncurses5-dev"
+      - "po-debconf"
+      - "python3"
+      - "libgtk2.0-dev"
+      - "libpam0g-dev"
+      - "libperl-dev"
+      - "chrpath"
+      - "liblua5.3-dev"
+      - "libhwloc-dev" # should include netloc but configure doesnt find it, bug?
+      - "dh-exec"
+      - "librrd-dev"
+      - "libipmimonitoring-dev"
+      - "hdf5-helpers"
+      - "libfreeipmi-dev"
+      - "libhdf5-dev"
+      - "man2html"
+      - "libcurl4-openssl-dev"
+      - "libpmix-dev"
+      - "libhttp-parser-dev"
+      - "libyaml-dev"
+      - "libjwt-dev"
+      - "libjson-c-dev"
+      - "liblz4-dev"
+      - "libnvidia-ml-dev"
+      - "libibmad-dev"
+      - "libibumad-dev"
+      - "numactl"
+      - "libnuma-dev"
+      - "libreadline-dev"
+      - "librrd-dev"
+      - "gcc"
+      - "openssl"
+      - "make"
+      - "ruby"
+      - "ruby-dev"
+    state: present
+    update_cache: true
+  when: ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==')

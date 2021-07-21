@@ -1,84 +1,76 @@
 ---
 # 1=compute, 2=database, 3=controller, 4=first controller, 5=all
 # todo support second controller setup
-- name: Check OS version and family
-  ansible.builtin.fail:
-    msg: "This role can only be run against CentOS 7 and 8 or Ubuntu 20. {{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported."
-  when:
-    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '<')
-    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '>')
-    - ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '!=')
-
-- name: "Check OS version and family"
-  ansible.builtin.debug:
-    msg: "PASS | This role can only be executed on CentOS 7 and 8 and Ubuntu 20 operating systems"
-  when:
-    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==')
-    - ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==')
-    - ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==')
+# perform prechecks
+- include_tasks: prechecks.yml
 
 
-- name: Check if munge key host is defined when install code 4 is not given.
-  ansible.builtin.fail:
-    msg: "This installation was not identified as first controller and needs a given munge key host. "
-  when: 4 not in install_code_list and munge_key_host is not defined
+# Add munge and slurm user and gorup, todo check if existend
+- include_tasks: users.yml
 
 
-- name: Check if slurm_controller_hostname and slurm_controller_ip are given when install code is not 4.
-  ansible.builtin.fail:
-    msg: "slurm_controller_hostname and slurm_controller_ip have to specified if not installing as controller. "
-  when: 
-    - 4 not in install_code_list and slurm_controller_hostname is not defined
-    - 4 not in install_code_list and slurm_controller_ip is not defined
+# activate epel and exclude slurm from it
+- include_tasks: epel.yml
+  when: ansible_distribution|lower == 'centos'
 
 
-- name: Set slurm_controller_hostname and slurm_controller_ip when install code is 4.
-  ansible.builtin.set_fact:
-    slurm_controller_hostname: "{{ ansible_hostname }}"
-    slurm_controller_ip: "{{ ansible_facts.default_ipv4.address }}"
-  when: 4 in install_code_list
+# install munge dependencies
+- include_tasks: munge_deps.yml
 
 
-- name: Check if slurm_database_hostname is given when install code is not 2.
-  ansible.builtin.fail:
-    msg: "slurm_database_hostname has to specified if not installing as database. "
-  when: 
-    - 2 not in install_code_list and slurm_database_hostname is not defined
+# create folders for munge and set permissions
+- include_tasks: munge_perm.yml
 
 
-- name: Set slurm_database_hostname when install code is 2.
-  ansible.builtin.set_fact:
-    slurm_database_hostname: "{{ ansible_hostname }}"
+# install munge
+- include_tasks: munge_install.yml
+
+
+# create or copy munge key file and set permissions
+- include_tasks: munge_key.yml
+
+
+# Enable and restart munge service.
+- include_tasks: munge_start.yml
+
+
+# Install mariadb
+- include_tasks: mariadb_install.yml
   when: 2 in install_code_list
 
-- name: Check if mariadb_root_password and mariadb_slurm_password are given when install code is 2.
-  ansible.builtin.fail:
-    msg: "mariadb_root_password and mariadb_slurm_password have to be specified when installing as database. "
-  when: 
-    - 2 in install_code_list and mariadb_root_password is not defined
-    - 2 in install_code_list and mariadb_slurm_password is not defined
+
+# Enable and start mariadb service. Also set root password if not set.
+- include_tasks: mariadb_start.yml
+  when: 2 in install_code_list
 
 
-- name: Set cluster_name to cryocluster when not specified.
-  ansible.builtin.set_fact:
-    cluster_name: "cryocluster"
-  when: cluster_name is not defined and 4 in install_code_list
-
-
-- name: Set slurm_version to cryocluster when not specified.
-  ansible.builtin.set_fact:
-    slurm_version: 20.11.8
-  when: slurm_version is not defined
-
-
-- include_tasks: prepare.yml
-
-
-- include_tasks: munge.yml
-
-
+# Setup database for slurm.
 - include_tasks: mariadb.yml
   when: 2 in install_code_list
 
 
-- include_tasks: slurm.yml
+# Install with apt package.
+- include_tasks: apt_install.yml
+  when: package_install|bool and ansible_distribution|lower == 'ubuntu'
+
+
+# Install slurm prerequisites.
+- include_tasks: slurm_pre.yml
+  when: not package_install|bool
+
+
+# Configure and install slurm.
+- include_tasks: slurm_compile.yml
+  when: not package_install|bool
+
+
+# Create folder and set permissions for slurm files. Copy config, etc
+- include_tasks: slurm_perm.yml
+
+
+# Set firewall up for slurm
+- include_tasks: slurm_firewall.yml
+
+
+# Startup slurm
+- include_tasks: slurm_start.yml

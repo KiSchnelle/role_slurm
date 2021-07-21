@@ -1,7 +1,7 @@
 #
 # Example of slurmdbd.conf
 #
-ArchiveDir=/var/log/slurm/archive
+ArchiveDir=/var/log/slurm-llnl/archive
 ArchiveEvents=yes
 ArchiveJobs=yes
 ArchiveResvs=yes
@@ -24,12 +24,12 @@ DbdPort=6819    # The default value
 DebugLevel=info
 DebugLevelSyslog=fatal
 # DefaultQOS=
-LogFile=/var/log/slurm/slurmdbd.log
+LogFile=/var/log/slurm-llnl/slurmdbd.log
 # LogTimeFormat=
 # MaxQueryTimeRange=
 # MessageTimeout
 # Parameters
-PidFile=/run/slurm/slurmdbd.pid
+PidFile=/run/slurmdbd.pid
 PluginDir=/usr/lib
 # PrivateData=
 PurgeEventAfter=12months

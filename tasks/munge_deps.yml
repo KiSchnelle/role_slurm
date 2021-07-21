@@ -1,0 +1,19 @@
+---
+- name: Install munge dependencies on CentOS 7 and 8
+  ansible.builtin.yum:
+    name:
+      - "OpenSSL"
+      - "bzip2"
+      - "zlib"
+      - "pkgconf"
+  when: ansible_distribution|lower == 'centos'
+
+
+- name: Install munge dependencies on Ubuntu 20
+  ansible.builtin.apt:
+    name:
+      - "openssl"
+      - "bzip2"
+      - "zlib1g"
+      - "pkgconf"
+  when: ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==')

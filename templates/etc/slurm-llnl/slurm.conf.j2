@@ -74,7 +74,7 @@ GresTypes=gpu
 #
 # HealthCheckInterval=180
 # HealthCheckNodeState=CYLCE
-# HealthCheckProgram=/etc/slurm/load-sensor  # this could be a script depending on usage
+# HealthCheckProgram=/etc/slurm-llnl/load-sensor  # this could be a script depending on usage
 #
 InactiveLimit=0
 # InteractiveStepOptions=
@@ -83,7 +83,7 @@ JobAcctGatherType=jobacct_gather/linux
 JobAcctGatherFrequency=30
 JobAcctGatherParams=UsePss
 JobCompHost={{ slurm_database_hostname }}
-JobCompLoc=/var/spool/slurm/acct/history 
+JobCompLoc=/var/spool/slurm-llnl/acct/history 
 # JobCompParams=
 # JobCompPass=
 # JobCompPort=
@@ -193,9 +193,9 @@ SelectTypeParameters=CR_Core_Memory
 # SlurmctldAddr=
 SlurmctldDebug=info
 SlurmctldHost={{ slurm_controller_hostname }}
-SlurmctldLogFile=/var/log/slurm/slurmctld.log
+SlurmctldLogFile=/var/log/slurm-llnl/slurmctld.log
 # SlurmctldParameters=
-SlurmctldPidFile=/run/slurm/slurmctld.pid
+SlurmctldPidFile=/run/slurmctld.pid
 # SlurmctldPlugstack=
 SlurmctldPort=6817
 # SlurmctldPrimaryOffProg=
@@ -204,16 +204,16 @@ SlurmctldSyslogDebug=fatal
 SlurmctldTimeout=120
 #
 SlurmdDebug=info
-SlurmdLogFile=/var/log/slurm/slurmd.log
+SlurmdLogFile=/var/log/slurm-llnl/slurmd.log
 # SlurmdParameters=
-SlurmdPidFile=/run/slurm/slurmd.pid
+SlurmdPidFile=/run/slurmd.pid
 SlurmdPort=6818
-SlurmdSpoolDir=/var/spool/slurm/d
+SlurmdSpoolDir=/var/spool/slurm-llnl/d
 SlurmdSyslogDebug=fatal
 SlurmdTimeout=300
 SlurmdUser=root
 #
-SlurmSchedLogFile=/var/log/slurm/slurmdshed.log
+SlurmSchedLogFile=/var/log/slurm-llnl/slurmdshed.log
 SlurmSchedLogLevel=1
 SlurmUser=slurm
 #
@@ -221,7 +221,7 @@ SlurmUser=slurm
 # SrunPortRange=
 # SrunProlog=
 #
-StateSaveLocation=/var/spool/slurm/state
+StateSaveLocation=/var/spool/slurm-llnl/state
 #
 # SuspendExcNodes=
 # SuspendExcParts=
@@ -232,10 +232,10 @@ StateSaveLocation=/var/spool/slurm/state
 #
 SwitchType=switch/none
 #
-# TaskEpilog=/etc/slurm/scripts/epilog.task
+# TaskEpilog=/etc/slurm-llnl/scripts/epilog.task
 TaskPlugin=task/affinity,task/cgroup
 TaskPluginParam=SlurmdOffSpec
-# TaskProlog=/etc/slurm/scripts/prolog.task
+# TaskProlog=/etc/slurm-llnl/scripts/prolog.task
 #
 # TCPTimeout=
 TmpFS=/tmp
