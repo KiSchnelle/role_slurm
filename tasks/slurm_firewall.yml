@@ -53,7 +53,7 @@
   rescue:
     - name: Get kernel version
       ansible.builtin.shell: uname -r
-      register: kenerl_version
+      register: kernel_version
     
     - name: Reinstall linux modules.
       ansible.builtin.apt:
