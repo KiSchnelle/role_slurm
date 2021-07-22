@@ -60,7 +60,7 @@ cd role_slurm
 mkdir install
 cd /var/log/ansible
 cp /var/log/ansible/roles/role_slurm/run.yml .
-ansible-playbook run.yml --user=$ANSIBLE_USER --extra-vars "ansible_sudo_pass=$ANSIBLE_USER_PASSWORD ansible_ssh_pass=$ANSIBLE_USER_PASSWORD host_key_checking=False" >> log.txt
+ansible-playbook run.yml --user=$ANSIBLE_USER --extra-vars "ansible_sudo_pass=$ANSIBLE_USER_PASSWORD ansible_ssh_pass=$ANSIBLE_USER_PASSWORD host_key_checking=False" >> role_slurm_log.txt
 
 
 

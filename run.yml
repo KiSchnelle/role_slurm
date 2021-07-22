@@ -1,6 +1,5 @@
 ---
 - hosts: localhost
-  connection: local
   become: True
   roles:
     - role_slurm
