@@ -22,7 +22,7 @@
 - name: Get munge.key file from serving host.
   ansible.posix.synchronize:
     src: /etc/munge/munge.key
-    dest: "{{ ansible_facts.hostname }}ansible/etc/munge/munge.key"
+    dest: "rsync://{{ ansible_hostname }}/etc/munge/munge.key"
     mode: pull
   delegate_to: "{{ slurm_controller_ip }}"
   when: 4 not in install_code_list
