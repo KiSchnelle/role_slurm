@@ -23,7 +23,7 @@
   ansible.posix.synchronize:
     src: /etc/munge/munge.key
     dest: "rsync://{{ ansible_hostname }}/etc/munge/munge.key"
-    mode: pull
+    mode: push
   delegate_to: "{{ slurm_controller_ip }}"
   when: 4 not in install_code_list
 
