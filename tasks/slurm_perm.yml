@@ -53,7 +53,7 @@
   with_items:
     - { path: /etc/slurm-llnl/slurm.conf , dest: /etc/slurm-llnl/slurm.conf }
     - { path: /etc/slurm-llnl/gres.conf , dest: /etc/slurm-llnl/gres.conf }
-    - { path: /etc/slurm-llnl/cgroup.conf , dest: /etc/sluslurm-llnlrm/cgroup.conf }
+    - { path: /etc/slurm-llnl/cgroup.conf , dest: /etc/slurm-llnl/cgroup.conf }
     - { path: /etc/slurm-llnl/topology.conf , dest: /etc/slurm-llnl/topology.conf }
     # - { path: /etc/slurm/acct_gather.conf , dest: /etc/slurm/acct_gather.conf }
     # - { path: /etc/slurm/cgroup_allowed_devices_file.conf , dest: /etc/slurm/cgroup_allowed_devices_file.conf }
