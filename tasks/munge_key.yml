@@ -17,12 +17,13 @@
       ansible.builtin.shell: 'sh -c  "dd if=/dev/urandom bs=1 count=1024 > /etc/munge/munge.key"'
   when: 4 in install_code_list
 
+# sudo on cnode needs host key in his file
 
 - name: Get munge.key file from serving host.
   ansible.posix.synchronize:
     src: /etc/munge/munge.key
-    dest: /etc/munge/munge.key
-    mode: push
+    dest: "{{ ansible_facts.hostname }}ansible/etc/munge/munge.key"
+    mode: pull
   delegate_to: "{{ slurm_controller_ip }}"
   when: 4 not in install_code_list
 
