@@ -1,6 +1,8 @@
 ---
 # 1=compute, 2=database, 3=controller, 4=first controller, 5=all
+#
 # todo support second controller setup
+#
 # perform prechecks
 - include_tasks: prechecks.yml
 

@@ -32,13 +32,17 @@ mkdir -p /var/log/ansible/roles
 ansible-galaxy collection install ansible.posix
 ansible-galaxy collection install community.mysql
 ansible-galaxy collection install community.general
+
 cd /var/log/ansible/roles
+
 git clone https://github.com/KiSchnelle/role_slurm.git
+
 cat << EOF >> /var/log/ansible/roles/role_slurm/defaults/main.yml
 # slurm variables, controller can be installed multiple times, first controller can also be database
 # 1=compute, 2=database, 3=controller, 4=first controller
 install_code_list: [1,2,3,4]
 package_install: false
+ansible_us: $ANSIBLE_USER
 ansible_pw: $ANSIBLE_USER_PASSWORD
 #
 # following neeeded if installlation is not for controller

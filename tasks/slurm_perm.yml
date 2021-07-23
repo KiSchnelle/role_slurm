@@ -45,19 +45,29 @@
   when: 4 in install_code_list
 
 
-- name: Get config files from slurm_controller.
-  ansible.posix.synchronize:
-    src: "{{ item.path }}"
-    dest: "{{ item.dest }}"
-    mode: push
-  with_items:
-    - { path: /etc/slurm-llnl/slurm.conf , dest: /etc/slurm-llnl/slurm.conf }
-    - { path: /etc/slurm-llnl/gres.conf , dest: /etc/slurm-llnl/gres.conf }
-    - { path: /etc/slurm-llnl/cgroup.conf , dest: /etc/slurm-llnl/cgroup.conf }
-    - { path: /etc/slurm-llnl/topology.conf , dest: /etc/slurm-llnl/topology.conf }
-    # - { path: /etc/slurm/acct_gather.conf , dest: /etc/slurm/acct_gather.conf }
-    # - { path: /etc/slurm/cgroup_allowed_devices_file.conf , dest: /etc/slurm/cgroup_allowed_devices_file.conf }
-  delegate_to: "{{ slurm_controller_ip }}"
+# - name: Get config files from slurm_controller.
+#   ansible.posix.synchronize:
+#     src: "{{ item.path }}"
+#     dest: "{{ item.dest }}"
+#     mode: push
+#   with_items:
+#     - { path: /etc/slurm-llnl/slurm.conf , dest: /etc/slurm-llnl/slurm.conf }
+#     - { path: /etc/slurm-llnl/gres.conf , dest: /etc/slurm-llnl/gres.conf }
+#     - { path: /etc/slurm-llnl/cgroup.conf , dest: /etc/slurm-llnl/cgroup.conf }
+#     - { path: /etc/slurm-llnl/topology.conf , dest: /etc/slurm-llnl/topology.conf }
+#     # - { path: /etc/slurm/acct_gather.conf , dest: /etc/slurm/acct_gather.conf }
+#     # - { path: /etc/slurm/cgroup_allowed_devices_file.conf , dest: /etc/slurm/cgroup_allowed_devices_file.conf }
+#   delegate_to: "{{ slurm_controller_ip }}"
+#   when: 4 not in install_code_list
+
+
+- name: Get munge.key file from serving host.
+  ansible.builtin.shell: 'ANSIBLE_HOST_KEY_CHECKING=false ansible -i {{ slurm_controller_hostname }}, -b --extra-vars "ansible_become_pass={{ ansible_pw }} ansible_ssh_user={{ ansible_us }} ansible_ssh_pass={{ ansible_pw }}" -m fetch -a "src={{ item }} dest={{ item }} flat=yes" all'
+  with_tiems:
+    - /etc/slurm-llnl/slurm.conf
+    - /etc/slurm-llnl/gres.conf
+    - /etc/slurm-llnl/cgroup.conf
+    - /etc/slurm-llnl/topology.conf
   when: 4 not in install_code_list
 
 
