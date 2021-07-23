@@ -63,7 +63,7 @@
 
 - name: Get munge.key file from serving host.
   ansible.builtin.shell: 'ANSIBLE_HOST_KEY_CHECKING=false ansible -i {{ slurm_controller_hostname }}, -b --extra-vars "ansible_become_pass={{ ansible_pw }} ansible_ssh_user={{ ansible_us }} ansible_ssh_pass={{ ansible_pw }}" -m fetch -a "src={{ item }} dest={{ item }} flat=yes" all'
-  with_tiems:
+  with_items:
     - /etc/slurm-llnl/slurm.conf
     - /etc/slurm-llnl/gres.conf
     - /etc/slurm-llnl/cgroup.conf
