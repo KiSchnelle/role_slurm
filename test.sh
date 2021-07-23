@@ -38,6 +38,8 @@ cat << EOF >> /var/log/ansible/roles/role_slurm/defaults/main.yml
 # slurm variables, controller can be installed multiple times, first controller can also be database
 # 1=compute, 2=database, 3=controller, 4=first controller
 install_code_list: [1,2,3,4]
+package_install: false
+ansible_pw: $ANSIBLE_USER_PASSWORD
 #
 # following neeeded if installlation is not for controller
 slurm_controller_hostname: $slurm_controller_hostname
@@ -60,9 +62,9 @@ cd role_slurm
 mkdir install
 cd /var/log/ansible
 cp /var/log/ansible/roles/role_slurm/run.yml .
-ansible-playbook run.yml --user=$ANSIBLE_USER --extra-vars "ansible_sudo_pass=$ANSIBLE_USER_PASSWORD ansible_ssh_pass=$ANSIBLE_USER_PASSWORD host_key_checking=False" >> role_slurm_log.txt
+ansible-playbook run.yml --user=$ANSIBLE_USER --extra-vars "ansible_sudo_pass=$ANSIBLE_USER_PASSWORD" >> role_slurm_log.txt
 
-
+rm /var/log/ansible/roles/role_slurm/defaults/main.yml
 
 cd /var/log/ansible
 
