@@ -36,4 +36,4 @@
 # sacctmgr add account cryo Description="Cryo users" Organization=cryo Cluster=sbcryo
 # sacctmgr add account internal Description="Internal users" Organization=internal parent=cryo
 # sacctmgr add account external Description="External users" Organization=external parent=cryo
-# sacctmgr create user ansible DefaultAccount=internal AdminLevel=Operator
+# sud
