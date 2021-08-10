@@ -2,17 +2,17 @@
 - name: Add munge group
   ansible.builtin.group:
     name: munge
-    gid: 1005
+    gid: "{{ munge_gid }}"
     state: present
     system: false
 
 - name: Add munge user
   ansible.builtin.user:
     name: munge
-    uid: 1005
+    uid: "{{ munge_uid }}"
     group: munge
     create_home: true
-    home: "/var/lib/munge"
+    home: "{{ munge_home }}"
     shell: "/sbin/nologin "
     state: present
     system: false
@@ -21,17 +21,17 @@
 - name: Add slurm group
   ansible.builtin.group:
     name: slurm
-    gid: 1006
+    gid: "{{ slurm_gid }}"
     state: present
     system: false
 
 - name: Add slurm user
   ansible.builtin.user:
     name: slurm
-    uid: 1006
+    uid: "{{ slurm_uid }}"
     group: slurm
     create_home: true
-    home: "/var/lib/slurm"
+    home: "{{ slurm_home }}"
     shell: "/bin/bash "
     state: present
     system: false

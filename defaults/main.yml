@@ -1,23 +1,19 @@
 ---
 # defaults file for role_slurm
-# slurm variables, controller can be installed multiple times, first controller can also be database
-# 1=compute, 2=database, 3=controller, 4=first controller
-install_code_list: [1,2,3,4]
 package_install: false
-ansible_us: $ANSIBLE_USER
-ansible_pw: $ANSIBLE_USER_PASSWORD
+# if true for redhat based systems firewalld will be used, for ubuntu ufw
+manage_firewall: true
 #
-# following neeeded if installlation is not for controller
-slurm_controller_hostname: $slurm_controller_hostname
-slurm_controller_ip: $slurm_controller_ip
+munge_gid: 1005
+munge_uid: 1005
+munge_home: "/var/lib/munge"
 #
-# following needed if installation is not for database
-slurm_database_hostname: $slurm_controller_hostname
+slurm_gid: 1006
+slurm_uid: 1006
+slurm_home: "/var/lib/slurm"
 #
-# following needed if installation is for database
-mariadb_root_password: $mariadb_root_password
-mariadb_slurm_password: $mariadb_slurm_password
-#
-cluster_name: $cluster_name
-slurm_version: 20.11.8 # tested for 20.11.8
+download_folder: "/var/log/ansible/role_slurm/install"
+# chaning following is not supported yet
+slurm_prefix: "/usr"
+slurm_sysconfdir: "/etc/slurm-llnl"
 #

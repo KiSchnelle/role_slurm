@@ -38,8 +38,8 @@ ansible-galaxy collection install community.general
 cd /var/log/ansible/roles
 git clone https://github.com/KiSchnelle/role_slurm.git
 
-# override default variables file
-cat << EOF > /var/log/ansible/roles/role_slurm/defaults/main.yml
+# override variables file
+cat << EOF > /var/log/ansible/roles/role_slurm/vars/main.yml
 # role_slurm variables
 slurm_version: 20.11.8 # tested for 20.11.8
 #
@@ -57,6 +57,7 @@ package_install: false
 #
 # following needed if installation is for primary controller
 cluster_name: $CLUSTER_NAME
+primary_controller_ip: $PRIMARY_CONTROLLER_IP
 #
 # following needed if installation is not for database
 # database_hostname: $DATABASE_HOSTNAME
@@ -65,17 +66,18 @@ cluster_name: $CLUSTER_NAME
 mariadb_root_password: $MARIADB_ROOT_PASSWORD
 mariadb_slurm_password: $MARIADB_SLURM_PASSWORD
 #
+# if not defined, default ipv4 interface found by ansible will be used
+# trusted_ipv4_interface: $TRUSTED_INTERFACE
 #
-# custom_slurm_conf_path:
 EOF
 
-cd role_slurm
-mkdir install
+# run role
 cd /var/log/ansible
 cp /var/log/ansible/roles/role_slurm/run.yml .
 ansible-playbook run.yml --user=$ANSIBLE_USER --extra-vars "ansible_sudo_pass=$ANSIBLE_USER_PASSWORD" >> role_slurm_log.txt
 
-rm /var/log/ansible/roles/role_slurm/defaults/main.yml
+# delete variables file
+rm /var/log/ansible/roles/role_slurm/vars/main.yml
 
 cd /var/log/ansible
 

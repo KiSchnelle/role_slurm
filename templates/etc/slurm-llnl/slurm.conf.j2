@@ -4,7 +4,7 @@
 # AccountingStorageBackupHost=
 AccountingStorageEnforce=associations,limits,qos
 # AccountingStorageExternalHost=
-AccountingStorageHost={{ slurm_database_hostname }}
+AccountingStorageHost={{ database_hostname }}
 # AccountingStorageParameters=
 # AccountingStoragePass=/var/run/munge/munge.socket.2
 AccountingStoragePort=6819
@@ -82,7 +82,7 @@ InactiveLimit=0
 JobAcctGatherType=jobacct_gather/linux
 JobAcctGatherFrequency=30
 JobAcctGatherParams=UsePss
-JobCompHost={{ slurm_database_hostname }}
+JobCompHost={{ database_hostname }}
 JobCompLoc=/var/spool/slurm-llnl/acct/history 
 # JobCompParams=
 # JobCompPass=
@@ -192,7 +192,7 @@ SelectTypeParameters=CR_Core_Memory
 #
 # SlurmctldAddr=
 SlurmctldDebug=info
-SlurmctldHost={{ slurm_controller_hostname }}
+SlurmctldHost={{ primary_controller_hostname }}
 SlurmctldLogFile=/var/log/slurm-llnl/slurmctld.log
 # SlurmctldParameters=
 SlurmctldPidFile=/run/slurmctld.pid

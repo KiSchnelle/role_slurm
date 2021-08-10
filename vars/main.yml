@@ -1,2 +1,31 @@
 ---
-# vars file for role_slurm
+# role_slurm variables
+# slurm_version: 20.11.8 # tested for 20.11.8
+#
+# add numbers to list for type of installation, controller can be installed multiple times, first controller can also be database
+# 1=compute, 2=database, 3=controller, 4=first controller
+# install_code_list: [1,2,3,4]
+# when installing on ubuntu this can be set to true to use apt for isntallation
+# package_install: false
+#
+# following needed if installlation is not for primary controller
+# primary_controller_hostname: $PRIMARY_CONTROLLER_HOSTNAME
+# primary_controller_ip: $PRIMARY_CONTROLLER_IP
+# primary_ansible_user: $ANSIBLE_USER
+# primary_ansible_pw: $ANSIBLE_USER_PASSWORD
+#
+# following needed if installation is for primary controller
+# cluster_name: $CLUSTER_NAME
+# primary_controller_ip: $PRIMARY_CONTROLLER_IP
+#
+# following needed if installation is not for database
+# database_hostname: $DATABASE_HOSTNAME
+#
+# following needed if installation is for database
+# mariadb_root_password: $MARIADB_ROOT_PASSWORD
+# mariadb_slurm_password: $MARIADB_SLURM_PASSWORD
+#
+# if not defined, default ipv4 interface found by ansible will be used
+# trusted_ipv4_interface: eth0
+#
+#

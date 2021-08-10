@@ -19,7 +19,7 @@
 
 
 - name: Get munge.key file from serving host.
-  ansible.builtin.shell: 'ANSIBLE_HOST_KEY_CHECKING=false ansible -i {{ slurm_controller_hostname }}, -b --extra-vars "ansible_become_pass={{ ansible_pw }} ansible_ssh_user={{ ansible_us }} ansible_ssh_pass={{ ansible_pw }}" -m fetch -a "src=/etc/munge/munge.key dest=/etc/munge/munge.key flat=yes" all'
+  ansible.builtin.shell: 'ANSIBLE_HOST_KEY_CHECKING=false ansible -i {{ primary_controller_hostname }}, -b --extra-vars "ansible_become_pass={{ primary_ansible_pw }} ansible_ssh_user={{ primary_ansible_user }} ansible_ssh_pass={{ primary_ansible_pw }}" -m fetch -a "src=/etc/munge/munge.key dest=/etc/munge/munge.key flat=yes" all'
   when: 4 not in install_code_list
 
 

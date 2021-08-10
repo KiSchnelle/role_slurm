@@ -56,12 +56,13 @@
     - name: Check if needed variables are defined.
       ansible.builtin.fail:
         msg: "FAIL | A needed variable for installing as primary controller is not given. "
-      when: cluster_name is not defined
+      when:
+       - cluster_name is not defined
+       - primary_controller_ip is not defined
     
     - name: Set primary_controller_hostname and primary_controller_ip when installing as primary controller.
       ansible.builtin.set_fact:
         primary_controller_hostname: "{{ ansible_hostname }}"
-        primary_controller_ip: "{{ ansible_facts.default_ipv4.address }}"
     
   when: 4 in install_code_list
 

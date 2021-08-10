@@ -15,7 +15,7 @@ It was intedend to have a common ansible user/password on all servers. When inst
 Role Variables
 --------------
 
-Variables can be found in the defaults/main.yml file.
+Variables can be found in the defaults/main.yml file and vars/main.yml. Variables in vars take priority over the ones in defaults.
 Using MAAS you could also copy a file from f.e. a nfs share before or use cat to override the cloned filed.
 
 Dependencies

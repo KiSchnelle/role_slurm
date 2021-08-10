@@ -44,9 +44,10 @@
     # - { path: etc/slurm/cgroup_allowed_devices_file.conf.j2 , dest: /etc/slurm/cgroup_allowed_devices_file.conf , owner: slurm , group: slurm , mode: "0644" }
   when: 4 in install_code_list
 
+# todo add copy of custom conf files from a folder fe network share
 
-- name: Get munge.key file from serving host.
-  ansible.builtin.shell: 'ANSIBLE_HOST_KEY_CHECKING=false ansible -i {{ slurm_controller_hostname }}, -b --extra-vars "ansible_become_pass={{ ansible_pw }} ansible_ssh_user={{ ansible_us }} ansible_ssh_pass={{ ansible_pw }}" -m fetch -a "src={{ item }} dest={{ item }} flat=yes" all'
+- name: Get slurm config files from serving host.
+  ansible.builtin.shell: 'ANSIBLE_HOST_KEY_CHECKING=false ansible -i {{ primary_controller_hostname }}, -b --extra-vars "ansible_become_pass={{ primary_ansible_pw }} ansible_ssh_user={{ primary_ansible_user }} ansible_ssh_pass={{ primary_ansible_pw }}" -m fetch -a "src={{ item }} dest={{ item }} flat=yes" all'
   with_items:
     - /etc/slurm-llnl/slurm.conf
     - /etc/slurm-llnl/gres.conf

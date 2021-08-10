@@ -5,21 +5,29 @@
   ignore_errors: true
   changed_when: false
 
+
+- name: Create download folder.
+  ansible.builtin.file:
+    path: "{{ download_folder }}"
+    state: directory
+    mode: "0700"
+  when: slurm_installed is failed
+
   
 - name: Download slurm.
   ansible.builtin.get_url:
     url: 'https://download.schedmd.com/slurm/slurm-{{ slurm_version }}.tar.bz2'
-    dest: '/var/log/ansible/roles/role_slurm/install/slurm-{{ slurm_version }}.tar.bz2'
+    dest: '{{ download_folder }}/slurm-{{ slurm_version }}.tar.bz2'
   when: slurm_installed is failed
 
 
 - name: Unarchive download.
   ansible.builtin.unarchive:
-    src: '/var/log/ansible/roles/role_slurm/install/slurm-{{ slurm_version }}.tar.bz2'
-    dest: '/var/log/ansible/roles/role_slurm/install'
+    src: '{{ download_folder }}/slurm-{{ slurm_version }}.tar.bz2'
+    dest: '{{ download_folder }}'
   when: slurm_installed is failed
 
 
 - name: Configure and build slurm.
-  ansible.builtin.shell: 'cd /var/log/ansible/roles/role_slurm/install/slurm-{{ slurm_version }} && ./configure --prefix=/usr --sysconfdir=/etc/slurm-llnl -enable-pam --enable-salloc-kill-cmd --without-shared-libslurm && make install && ldconfig -n /usr/lib64'
+  ansible.builtin.shell: 'cd {{ download_folder }}/slurm-{{ slurm_version }} && ./configure --prefix={{ slurm_prefix }} --sysconfdir={{ slurm_sysconfdir }} -enable-pam --enable-salloc-kill-cmd --without-shared-libslurm && make install && ldconfig -n /usr/lib64'
   when: slurm_installed is failed
