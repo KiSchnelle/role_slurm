@@ -1,38 +1,58 @@
-Role Name
+Ansible Role for Installing Slurm on CentOS 7,8 and Ubuntu 20
 =========
 
-A brief description of the role goes here.
+This role is can be used to install Slurm.
+It was developed in intention to be used inside a bash script in combination with MAAS(Metal as a Service) when deploying a server, but can also be run apart from that.
+
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Make sure to have all servers using a form of time synchronizaion like ntp. When using MAAS this is enabled by default and can be configured in the settings.
+
+It was intedend to have a common ansible user/password on all servers. When installing not as controller the installation will need to access the controller server via ssh conntionc with password authentication. Key authentication is not supported yet, since i havnt found a clean way for using it when deploying fresh servers.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Variables can be found in the defaults/main.yml file.
+Using MAAS you could also copy a file from f.e. a nfs share before or use cat to override the cloned filed.
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+This role depends on the ansible.posix, community.mysql and community.general collections.
+To install them type for example:
+```
+ansible-galaxy collection install ansible.posix
+```
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Using MAAS:
+When deploying a machine add a bash script like the given example_script.sh as Cloud-init user-data. Which will basically clone the github repo, add custom config if wanted and run the role as if you would run it.
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+
+To run it type for example:
+```
+ansible-playbook run.yml --user=$ANSIBLE_USER --extra-vars "ansible_sudo_pass=$ANSIBLE_USER_PASSWORD" >> role_slurm_log.txt
+```
+
+
+
+
+- hosts: localhost
+  become: True
+  roles:
+    - role_slurm
 
 License
 -------
 
-BSD
+Apache License 2.0
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+This role was created in 2021 by Kilian Schnelle, part of the Department of Structure Biology at the University of Osnabrueck.

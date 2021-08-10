@@ -53,17 +53,17 @@
 
 # Install with apt package.
 - include_tasks: apt_install.yml
-  when: package_install and ansible_distribution|lower == 'ubuntu'
+  when: package_install is defined and package_install and ansible_distribution|lower == 'ubuntu'
 
 
 # Install slurm prerequisites.
 - include_tasks: slurm_pre.yml
-  when: not package_install
+  when: not package_install or package_install is not defined
 
 
 # Configure and install slurm.
 - include_tasks: slurm_compile.yml
-  when: not package_install
+  when: not package_install or package_install is not defined
 
 
 # Create folder and set permissions for slurm files. Copy config, etc
