@@ -20,7 +20,7 @@
     - name: Check for not defined install code or unsupprted code.
       ansible.builtin.fail:
         msg: "FAIL | Unsupported or undefined install code."
-      when: install_code_list is not defined or not install_code_list|difference([1,2,3,4])
+      when: install_code_list is not defined or (install_code_list|difference([1,2,3,4]))|length > 0
   
     - name: Check if install_code_list is defined.
       ansible.builtin.debug:
