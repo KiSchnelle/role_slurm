@@ -34,7 +34,7 @@
 - name: Setup firewalld.
   ansible.posix.firewalld:
     zone: trusted
-    interface: "{{ trusted_ipv4_interface | default('ansible_facts.default_ipv4.interface')"
+    interface: "{{ trusted_ipv4_interface | default('ansible_facts.default_ipv4.interface') }}"
     permanent: true
     immediate: true
     enabled: true
@@ -45,14 +45,14 @@
   block:
   - name: Setup ufw.
     community.general.ufw:
-      interface: "{{ trusted_ipv4_interface | default('ansible_facts.default_ipv4.interface')"
+      interface: "{{ trusted_ipv4_interface | default('ansible_facts.default_ipv4.interface') }}"
       direction: in
       rule: allow
       state: enabled
   
   - name: Setup ufw.
     community.general.ufw:
-      interface: "{{ trusted_ipv4_interface | default('ansible_facts.default_ipv4.interface')"
+      interface: "{{ trusted_ipv4_interface | default('ansible_facts.default_ipv4.interface') }}"
       direction: out
       rule: allow
       state: enabled
@@ -66,14 +66,14 @@
 
     - name: Setup ufw.
       community.general.ufw:
-        interface: "{{ trusted_ipv4_interface | default('ansible_facts.default_ipv4.interface')"
+        interface: "{{ trusted_ipv4_interface | default('ansible_facts.default_ipv4.interface') }}"
         direction: in
         rule: allow
         state: enabled
     
     - name: Setup ufw.
       community.general.ufw:
-        interface: "{{ trusted_ipv4_interface | default('ansible_facts.default_ipv4.interface')"
+        interface: "{{ trusted_ipv4_interface | default('ansible_facts.default_ipv4.interface') }}"
         direction: out
         rule: allow
         state: enabled
