@@ -53,7 +53,7 @@
 
 - name: Checks for primary controller installation.
   block:
-    - name: Check if needed variables are defined.
+    - name: Check if needed variables for primary controller installation are defined.
       ansible.builtin.fail:
         msg: "FAIL | A needed variable for installing as primary controller is not given. "
       when:
@@ -63,7 +63,6 @@
     - name: Set primary_controller_hostname and primary_controller_ip when installing as primary controller.
       ansible.builtin.set_fact:
         primary_controller_hostname: "{{ ansible_hostname }}"
-    
   when: 4 in install_code_list
 
 
@@ -77,7 +76,15 @@
         - primary_controller_ip is not defined
         - primary_ansible_user is not defined
         - primery_ansible_pw is not defined
-  
+    
+    - name: Check for primary controller variables.
+      ansible.builtin.debug:
+        msg: "PASS | Missing a needed variable defining the primary controller. "
+      when:
+        - primary_controller_hostname is defined
+        - primary_controller_ip is defined
+        - primary_ansible_user is defined
+        - primery_ansible_pw is defined
   when: 4 not in install_code_list
 
 
@@ -85,7 +92,7 @@
   ansible.builtin.fail:
     msg: "database_hostname has to specified if not installing as database. "
   when: 
-    - 2 not in install_code_list and slurm_database_hostname is not defined
+    - 2 not in install_code_list and database_hostname is not defined
 
 
 - name: Set slurm_database_hostname when installing as database node.
