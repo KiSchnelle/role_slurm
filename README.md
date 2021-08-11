@@ -38,14 +38,13 @@ To run it type for example:
 ```
 ansible-playbook run.yml --user=$ANSIBLE_USER --extra-vars "ansible_sudo_pass=$ANSIBLE_USER_PASSWORD" >> role_slurm_log.txt
 ```
-
-
-
-
+or inside a playbook:
+```
 - hosts: localhost
   become: True
   roles:
     - role_slurm
+```
 
 License
 -------
