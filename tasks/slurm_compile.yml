@@ -10,7 +10,7 @@
   ansible.builtin.file:
     path: "{{ download_folder }}"
     state: directory
-    mode: "0700"
+    mode: "0600"
   when: slurm_installed is failed
 
   

@@ -12,7 +12,7 @@ slurm_gid: 1006
 slurm_uid: 1006
 slurm_home: "/var/lib/slurm"
 #
-download_folder: "/var/log/ansible/role_slurm/install"
+download_folder: "/var/log/ansible/roles/role_slurm/install"
 # chaning following is not supported yet
 slurm_prefix: "/usr"
 slurm_sysconfdir: "/etc/slurm-llnl"
