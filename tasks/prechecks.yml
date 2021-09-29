@@ -72,14 +72,14 @@
         msg: "FAIL | Missing a needed variable defining the primary controller. "
       when:
         - primary_controller_hostname is not defined or primary_controller_ip is not defined or primary_ansible_user is not defined or
-          primery_ansible_pw is not defined
+          primary_ansible_pw is not defined
     
     - name: Check for primary controller variables.
       ansible.builtin.debug:
         msg: "PASS | Missing a needed variable defining the primary controller. "
       when:
         - primary_controller_hostname is defined or primary_controller_ip is defined or primary_ansible_user is defined or
-          primery_ansible_pw is defined
+          primary_ansible_pw is defined
   when: 4 not in install_code_list
 
 
