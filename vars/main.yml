@@ -19,7 +19,7 @@
 # primary_controller_ip: $PRIMARY_CONTROLLER_IP
 #
 # following needed if installation is not for database
-# database_hostname: $DATABASE_HOSTNAME
+# slurm_database_hostname: $DATABASE_HOSTNAME
 #
 # following needed if installation is for database
 # mariadb_root_password: $MARIADB_ROOT_PASSWORD
