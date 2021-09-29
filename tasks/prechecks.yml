@@ -83,11 +83,11 @@
   when: 4 not in install_code_list
 
 
-- name: Check if database_hostname is given when install not as database node.
+- name: Check if slurm_database_hostname is given when install not as database node.
   ansible.builtin.fail:
-    msg: "database_hostname has to specified if not installing as database. "
+    msg: "slurm_database_hostname has to specified if not installing as database. "
   when: 
-    - 2 not in install_code_list and database_hostname is not defined
+    - 2 not in install_code_list and slurm_database_hostname is not defined
 
 
 - name: Set slurm_database_hostname when installing as database node.
