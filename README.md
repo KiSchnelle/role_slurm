@@ -10,7 +10,7 @@ Requirements
 
 Make sure to have all servers using a form of time synchronizaion like ntp. When using MAAS this is enabled by default and can be configured in the settings.
 
-It was intedend to have a common ansible user/password on all servers. When installing not as controller the installation will need to access the controller server via ssh conntionc with password authentication. Key authentication is not supported yet, since i havnt found a clean way for using it when deploying fresh servers.
+It was intedend to have a common ansible user/password on all servers. When installing not as controller the installation will need to access the controller server via ssh connection with password authentication. Key authentication is not supported yet, since i havnt found a clean way for using it when deploying fresh servers.
 
 Role Variables
 --------------
