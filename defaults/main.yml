@@ -17,3 +17,5 @@ download_folder: "/var/log/ansible/roles/role_slurm/install"
 slurm_prefix: "/usr"
 slurm_sysconfdir: "/etc/slurm-llnl"
 #
+custom_config: false
+custom_config_folder: /slurm_conf

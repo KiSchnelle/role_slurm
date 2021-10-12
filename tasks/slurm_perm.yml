@@ -8,26 +8,137 @@
     group: "{{ item.group }}"
     mode: "{{ item.mode }}"
   with_items:
-    - { path: /var/log/slurm-llnl , state: directory , owner: slurm , group: slurm , mode: "0755", install: 5 }
-    - { path: /var/log/slurm-llnl/archive , state: directory , owner: slurm , group: slurm , mode: "0755", install: 2 }
-    - { path: /var/log/slurm-llnl/slurmbdb.log  , state: touch , owner: slurm , group: slurm , mode: "0600", install: 2 }
-    - { path: /var/log/slurm-llnl/slurmctld.log , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
-    - { path: /var/log/slurm-llnl/slurmd.log , state: touch , owner: root , group: root , mode: "0600", install:  5} # must distinct exist on each node
-    - { path: /var/log/slurm-llnl/slurmdshed.log , state: touch , owner: slurm , group: slurm , mode: "0600", install: 5 }
-    - { path: /run/slurmdbd.pid , state: touch , owner: slurm , group: slurm , mode: "0600", install: 2 }
-    - { path: /run/slurmctld.pid , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
-    - { path: /run/slurmd.pid , state: touch , owner: root , group: root , mode: "0600", install: 5 } # must distinct exist on each node
-    - { path: /var/spool/slurm-llnl , state: directory , owner: slurm , group: slurm , mode: "0755", install: 5 }
-    - { path: /var/spool/slurm-llnl/d , state: directory , owner: root , group: root , mode: "0755", install: 5 } # must distinct exist on each node
-    - { path: /var/spool/slurm-llnl/acct , state: directory , owner: slurm , group: slurm , mode: "0755", install: 3 }
-    - { path: /var/spool/slurm-llnl/acct/history , state: touch , owner: slurm , group: slurm , mode: "0600", install: 3 }
-    - { path: /var/spool/slurm-llnl/state , state: directory , owner: slurm , group: slurm , mode: "0755", install: 3 }
-    - { path: /etc/slurm-llnl , state: directory , owner: root , group: root , mode: "0755", install: 5 }
-    - { path: /etc/slurm-llnl/scripts , state: directory , owner: root , group: root , mode: "0755", install: 5 }
+    - {
+        path: /var/log/slurm-llnl,
+        state: directory,
+        owner: slurm,
+        group: slurm,
+        mode: "0755",
+        install: 5,
+      }
+    - {
+        path: /var/log/slurm-llnl/archive,
+        state: directory,
+        owner: slurm,
+        group: slurm,
+        mode: "0755",
+        install: 2,
+      }
+    - {
+        path: /var/log/slurm-llnl/slurmbdb.log,
+        state: touch,
+        owner: slurm,
+        group: slurm,
+        mode: "0600",
+        install: 2,
+      }
+    - {
+        path: /var/log/slurm-llnl/slurmctld.log,
+        state: touch,
+        owner: slurm,
+        group: slurm,
+        mode: "0600",
+        install: 3,
+      }
+    - {
+        path: /var/log/slurm-llnl/slurmd.log,
+        state: touch,
+        owner: root,
+        group: root,
+        mode: "0600",
+        install: 5,
+      } # must distinct exist on each node
+    - {
+        path: /var/log/slurm-llnl/slurmdshed.log,
+        state: touch,
+        owner: slurm,
+        group: slurm,
+        mode: "0600",
+        install: 5,
+      }
+    - {
+        path: /run/slurmdbd.pid,
+        state: touch,
+        owner: slurm,
+        group: slurm,
+        mode: "0600",
+        install: 2,
+      }
+    - {
+        path: /run/slurmctld.pid,
+        state: touch,
+        owner: slurm,
+        group: slurm,
+        mode: "0600",
+        install: 3,
+      }
+    - {
+        path: /run/slurmd.pid,
+        state: touch,
+        owner: root,
+        group: root,
+        mode: "0600",
+        install: 5,
+      } # must distinct exist on each node
+    - {
+        path: /var/spool/slurm-llnl,
+        state: directory,
+        owner: slurm,
+        group: slurm,
+        mode: "0755",
+        install: 5,
+      }
+    - {
+        path: /var/spool/slurm-llnl/d,
+        state: directory,
+        owner: root,
+        group: root,
+        mode: "0755",
+        install: 5,
+      } # must distinct exist on each node
+    - {
+        path: /var/spool/slurm-llnl/acct,
+        state: directory,
+        owner: slurm,
+        group: slurm,
+        mode: "0755",
+        install: 3,
+      }
+    - {
+        path: /var/spool/slurm-llnl/acct/history,
+        state: touch,
+        owner: slurm,
+        group: slurm,
+        mode: "0600",
+        install: 3,
+      }
+    - {
+        path: /var/spool/slurm-llnl/state,
+        state: directory,
+        owner: slurm,
+        group: slurm,
+        mode: "0755",
+        install: 3,
+      }
+    - {
+        path: /etc/slurm-llnl,
+        state: directory,
+        owner: root,
+        group: root,
+        mode: "0755",
+        install: 5,
+      }
+    - {
+        path: /etc/slurm-llnl/scripts,
+        state: directory,
+        owner: root,
+        group: root,
+        mode: "0755",
+        install: 5,
+      }
   when: item.install in install_code_list or item.install == 5
 
-
-- name: Copy config files and set permissions.
+- name: Copy config files from templates and set permissions.
   ansible.builtin.template:
     src: "{{ item.path }}"
     dest: "{{ item.dest }}"
@@ -35,16 +146,91 @@
     group: "{{ item.group }}"
     mode: "{{ item.mode }}"
   with_items:
-    - { path: etc/slurm-llnl/slurm.conf.j2 , dest: /etc/slurm-llnl/slurm.conf , owner: slurm , group: slurm , mode: "0644" }
-    - { path: etc/slurm-llnl/slurmdbd.conf.j2 , dest: /etc/slurm-llnl/slurmdbd.conf , owner: slurm , group: slurm , mode: "0600" }
-    - { path: etc/slurm-llnl/gres.conf.j2 , dest: /etc/slurm-llnl/gres.conf , owner: slurm , group: slurm , mode: "0644" }
-    - { path: etc/slurm-llnl/cgroup.conf.j2 , dest: /etc/slurm-llnl/cgroup.conf , owner: slurm , group: slurm , mode: "0644" }
-    - { path: etc/slurm-llnl/topology.conf.j2 , dest: /etc/slurm-llnl/topology.conf , owner: slurm , group: slurm , mode: "0644" }
+    - {
+        path: etc/slurm-llnl/slurm.conf.j2,
+        dest: /etc/slurm-llnl/slurm.conf,
+        owner: slurm,
+        group: slurm,
+        mode: "0644",
+      }
+    - {
+        path: etc/slurm-llnl/slurmdbd.conf.j2,
+        dest: /etc/slurm-llnl/slurmdbd.conf,
+        owner: slurm,
+        group: slurm,
+        mode: "0600",
+      }
+    - {
+        path: etc/slurm-llnl/gres.conf.j2,
+        dest: /etc/slurm-llnl/gres.conf,
+        owner: slurm,
+        group: slurm,
+        mode: "0644",
+      }
+    - {
+        path: etc/slurm-llnl/cgroup.conf.j2,
+        dest: /etc/slurm-llnl/cgroup.conf,
+        owner: slurm,
+        group: slurm,
+        mode: "0644",
+      }
+    - {
+        path: etc/slurm-llnl/topology.conf.j2,
+        dest: /etc/slurm-llnl/topology.conf,
+        owner: slurm,
+        group: slurm,
+        mode: "0644",
+      }
     # - { path: etc/slurm/acct_gather.conf.j2 , dest: /etc/slurm/acct_gather.conf , owner: slurm , group: slurm , mode: "0644" }
     # - { path: etc/slurm/cgroup_allowed_devices_file.conf.j2 , dest: /etc/slurm/cgroup_allowed_devices_file.conf , owner: slurm , group: slurm , mode: "0644" }
-  when: 4 in install_code_list
+  when: 4 in install_code_list and not custom_config
 
-# todo add copy of custom conf files from a folder fe network share
+- name: Copy config files from custom folder and set permissions.
+  ansible.builtin.copy:
+    src: "{{ item.path }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - {
+        path: "{{ custom_config_folder }}/slurm.conf",
+        dest: /etc/slurm-llnl/slurm.conf,
+        owner: slurm,
+        group: slurm,
+        mode: "0644",
+      }
+    - {
+        path: "{{ custom_config_folder }}/slurmdbd.conf",
+        dest: /etc/slurm-llnl/slurmdbd.conf,
+        owner: slurm,
+        group: slurm,
+        mode: "0600",
+      }
+    - {
+        path: "{{ custom_config_folder }}/gres.conf",
+        dest: /etc/slurm-llnl/gres.conf,
+        owner: slurm,
+        group: slurm,
+        mode: "0644",
+      }
+    - {
+        path: "{{ custom_config_folder }}/cgroup.conf",
+        dest: /etc/slurm-llnl/cgroup.conf,
+        owner: slurm,
+        group: slurm,
+        mode: "0644",
+      }
+    - {
+        path: "{{ custom_config_folder }}/topology.conf",
+        dest: /etc/slurm-llnl/topology.conf,
+        owner: slurm,
+        group: slurm,
+        mode: "0644",
+      }
+    # - { path: etc/slurm/acct_gather.conf.j2 , dest: /etc/slurm/acct_gather.conf , owner: slurm , group: slurm , mode: "0644" }
+    # - { path: etc/slurm/cgroup_allowed_devices_file.conf.j2 , dest: /etc/slurm/cgroup_allowed_devices_file.conf , owner: slurm , group: slurm , mode: "0644" }
+  when: 4 in install_code_list and custom_config
 
 - name: Get slurm config files from serving host.
   ansible.builtin.shell: 'ANSIBLE_HOST_KEY_CHECKING=false ansible -i {{ primary_controller_hostname }}, -b --extra-vars "ansible_become_pass={{ primary_ansible_pw }} ansible_ssh_user={{ primary_ansible_user }} ansible_ssh_pass={{ primary_ansible_pw }}" -m fetch -a "src={{ item }} dest={{ item }} flat=yes" all'
@@ -55,7 +241,6 @@
     - /etc/slurm-llnl/topology.conf
   when: 4 not in install_code_list
 
-
 # - name: Copy /etc/slurm/scripts and set permissions.
 #   ansible.builtin.copy:
 #     src: etc/slurm/scripts/
@@ -63,7 +248,6 @@
 #     owner: slurm
 #     group: slurm
 #     mode: 0755
-
 
 - name: Copy /etc/logrotate.d/ files.
   ansible.builtin.copy:
@@ -73,13 +257,12 @@
     group: root
     mode: 0644
   with_items:
-    - {name: slurmctld , code: 3}
-    - {name: slurmdbd , code: 2}
-    - {name: slurmd , code: 5}
+    - { name: slurmctld, code: 3 }
+    - { name: slurmdbd, code: 2 }
+    - { name: slurmd, code: 5 }
   when:
     - item.code in install_code_list or item.code == 5
     - not package_install
-
 
 - name: Copy /etc/default/ files.
   ansible.builtin.copy:
@@ -89,13 +272,12 @@
     group: root
     mode: 0644
   with_items:
-    - {name: slurmctld , code: 3}
-    - {name: slurmdbd , code: 2}
-    - {name: slurmd , code: 5}
+    - { name: slurmctld, code: 3 }
+    - { name: slurmdbd, code: 2 }
+    - { name: slurmd, code: 5 }
   when:
     - item.code in install_code_list or item.code == 5
     - not package_install
-
 
 # copy init.d files? gotta change them?
 
@@ -107,9 +289,9 @@
     group: root
     mode: 0644
   with_items:
-    - {name: slurmctld , code: 3}
-    - {name: slurmdbd , code: 2}
-    - {name: slurmd , code: 5}
+    - { name: slurmctld, code: 3 }
+    - { name: slurmdbd, code: 2 }
+    - { name: slurmd, code: 5 }
   when:
     - item.code in install_code_list or item.code == 5
     - not package_install

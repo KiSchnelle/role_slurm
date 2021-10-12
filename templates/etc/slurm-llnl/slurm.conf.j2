@@ -4,7 +4,7 @@
 # AccountingStorageBackupHost=
 AccountingStorageEnforce=associations,limits,qos
 # AccountingStorageExternalHost=
-AccountingStorageHost={{ database_hostname }}
+AccountingStorageHost={{ slurm_database_hostname }}
 # AccountingStorageParameters=
 # AccountingStoragePass=/var/run/munge/munge.socket.2
 AccountingStoragePort=6819
@@ -121,7 +121,7 @@ MaxStepCount=100000
 #
 # MessageTimeout=
 MinJobAge=300
-MpiDefault=none
+MpiDefault=pmi2
 # MpiParams=
 # OverTimeLimit=
 # PluginDir=
