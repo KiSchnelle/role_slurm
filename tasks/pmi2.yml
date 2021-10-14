@@ -1,0 +1,5 @@
+---
+- name: Install pmi2
+  ansibel.builtin.shell:
+    cmd: make -j install
+    chdir: "{{ download_folder }}/slurm-{{ slurm_version }}/contribs/pmi2"

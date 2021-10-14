@@ -6,74 +6,61 @@
 # perform prechecks
 - include_tasks: prechecks.yml
 
-
 # Add munge and slurm user and gorup, todo check if existend
 - include_tasks: users.yml
-
 
 # activate epel and exclude slurm from it
 - include_tasks: epel.yml
   when: ansible_distribution|lower == 'centos'
 
-
 # install munge dependencies
 - include_tasks: munge_deps.yml
-
 
 # create folders for munge and set permissions
 - include_tasks: munge_perm.yml
 
-
 # install munge
 - include_tasks: munge_install.yml
-
 
 # create or copy munge key file and set permissions
 - include_tasks: munge_key.yml
 
-
 # Enable and restart munge service.
 - include_tasks: munge_start.yml
-
 
 # Install mariadb
 - include_tasks: mariadb_install.yml
   when: 2 in install_code_list
 
-
 # Enable and start mariadb service. Also set root password if not set.
 - include_tasks: mariadb_start.yml
   when: 2 in install_code_list
-
 
 # Setup database for slurm.
 - include_tasks: mariadb_slurm.yml
   when: 2 in install_code_list
 
-
 # Install with apt package.
 - include_tasks: apt_install.yml
   when: package_install is defined and package_install and ansible_distribution|lower == 'ubuntu'
-
 
 # Install slurm prerequisites.
 - include_tasks: slurm_pre.yml
   when: not package_install or package_install is not defined
 
-
 # Configure and install slurm.
 - include_tasks: slurm_compile.yml
   when: not package_install or package_install is not defined
 
-
 # Create folder and set permissions for slurm files. Copy config, etc
 - include_tasks: slurm_perm.yml
-
 
 # Set firewall up for slurm
 - include_tasks: slurm_firewall.yml
   when: manage_firewall
 
+# build pmi2
+- include_tasks: pmi2.yml
 
 # Startup slurm
 - include_tasks: slurm_start.yml
