@@ -1,6 +1,6 @@
 ---
 # role_slurm variables
-# slurm_version: 20.11.8 # tested for 20.11.8
+# slurm_version: 21.08.5 # tested for 21.08.05
 #
 # add numbers to list for type of installation, controller can be installed multiple times, first controller can also be database
 # 1=compute, 2=database, 3=controller, 4=first controller

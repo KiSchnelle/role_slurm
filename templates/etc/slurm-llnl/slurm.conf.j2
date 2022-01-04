@@ -11,7 +11,7 @@ AccountingStoragePort=6819
 AccountingStorageTRES=gres/gpu
 AccountingStorageType=accounting_storage/slurmdbd
 AccountingStorageUser=slurm
-AccountingStoreJobComment=YES
+AccountingStoreFlags=job_comment
 #
 # AcctGatherNodeFreq=
 # AcctGatherEnergyType=acct_gather_energy/ipmi
@@ -44,13 +44,6 @@ CredType=cred/munge
 # DefMemPerCPU=
 # DefMemPerGPU=
 # DefMemPerNode=
-#
-# DefaultStorageHost=
-# DefaultStorageLoc=
-# DefaultStoragePass=
-# DefaultStoragePort=
-# DefaultStorageType=
-# DefaultStorageUser=
 #
 # DependencyParameters=
 DisableRootJobs=NO
@@ -181,7 +174,7 @@ PropagateResourceLimitsExcept=MEMLOCK
 ReturnToService=1
 #
 # RoutePlugin=
-# SbcastParameters=
+# BcastParameters=
 #
 # SchedulerParameters=
 # SchedulerTimeSlice=
