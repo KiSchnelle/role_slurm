@@ -1,4 +1,10 @@
 ---
+- name: Check if infiniband driver is installed. # TODO find better solution
+  ansible.builtin.shell: ibstat
+  register: ib_installed
+  ignore_errors: true
+  changed_when: false
+
 - name: Install slurm prerequisites.
   ansible.builtin.yum:
     name:
@@ -38,7 +44,6 @@
     update_cache: true
   when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==')
 
-
 - name: Install slurm prerequisites.
   block:
     - name: Install slurm prerequisites for CentOS 8.
@@ -75,59 +80,65 @@
           - "libjwt-devel" # for Slurm REST API
         state: present
         update_cache: true
-    
+
     - name: Install slurm prerequisites for CentOS 8.
       ansible.builtin.dnf:
-        name: 
+        name:
           - "rrdtool-devel" # for RRD External Sensor Data Collection Plugin
           - "lua-devel" # for Lua Support Plugin
           - "hwloc-devel" # for cgroup Task Affinity Plugin
         state: present
         update_cache: true
-        enablerepo: 
+        enablerepo:
           - "PowerTools"
   when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==')
 
-
 - name: Install slurm prerequisites for Ubuntu 20.
-  ansible.builtin.apt:
-    name:
-      - "debhelper"
-      - "libncurses5-dev"
-      - "po-debconf"
-      - "python3"
-      - "libgtk2.0-dev"
-      - "libpam0g-dev"
-      - "libperl-dev"
-      - "chrpath"
-      - "liblua5.3-dev"
-      - "libhwloc-dev" # should include netloc but configure doesnt find it, bug?
-      - "dh-exec"
-      - "librrd-dev"
-      - "libipmimonitoring-dev"
-      - "hdf5-helpers"
-      - "libfreeipmi-dev"
-      - "libhdf5-dev"
-      - "man2html"
-      - "libcurl4-openssl-dev"
-      - "libpmix-dev"
-      - "libhttp-parser-dev"
-      - "libyaml-dev"
-      - "libjwt-dev"
-      - "libjson-c-dev"
-      - "liblz4-dev"
-      - "libnvidia-ml-dev"
-      - "libibmad-dev"
-      - "libibumad-dev"
-      - "numactl"
-      - "libnuma-dev"
-      - "libreadline-dev"
-      - "librrd-dev"
-      - "gcc"
-      - "openssl"
-      - "make"
-      - "ruby"
-      - "ruby-dev"
-    state: present
-    update_cache: true
+  block:
+    - name: Install slurm prerequisites for Ubuntu 20
+      ansible.builtin.apt:
+        name:
+          - "debhelper"
+          - "libncurses5-dev"
+          - "po-debconf"
+          - "python3"
+          - "libgtk2.0-dev"
+          - "libpam0g-dev"
+          - "libperl-dev"
+          - "chrpath"
+          - "liblua5.3-dev"
+          - "libhwloc-dev" # should include netloc but configure doesnt find it, bug?
+          - "dh-exec"
+          - "librrd-dev"
+          - "libipmimonitoring-dev"
+          - "hdf5-helpers"
+          - "libfreeipmi-dev"
+          - "libhdf5-dev"
+          - "man2html"
+          - "libcurl4-openssl-dev"
+          - "libpmix-dev"
+          - "libhttp-parser-dev"
+          - "libyaml-dev"
+          - "libjwt-dev"
+          - "libjson-c-dev"
+          - "liblz4-dev"
+          - "libnvidia-ml-dev"
+          - "numactl"
+          - "libnuma-dev"
+          - "libreadline-dev"
+          - "librrd-dev"
+          - "gcc"
+          - "openssl"
+          - "make"
+          - "ruby"
+          - "ruby-dev"
+        state: present
+        update_cache: true
+
+    - name: Install ib plugins when ib is not isnstalled. # causes error else
+      ansible.builtin.apt:
+        name:
+          - "libibmad-dev"
+          - "libibumad-dev"
+      when: ib_installed is failed
   when: ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==')
