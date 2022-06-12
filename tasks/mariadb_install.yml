@@ -9,7 +9,6 @@
     update_cache: true
   when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==')
 
-
 - name: Install mariaDB on CentOS 8.
   block:
     - name: Install mariaDB on CentOS 8.
@@ -19,14 +18,13 @@
           - "mariadb-devel"
         state: present
         update_cache: true
-    
+
     - name: Install python3-mysql for CentOS 8.
       ansible.builtin.dnf:
         name: "python3-mysql"
         state: present
         update_cache: true
   when: ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==')
-
 
 - name: Install mariaDB on Ubuntu 20.
   ansible.builtin.apt:
@@ -38,3 +36,4 @@
     state: present
     update_cache: true
   when: ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '==')
+  retries: 3

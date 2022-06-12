@@ -4,7 +4,7 @@
     name: slurm-wlm
     state: present
     update_cache: true
-
+  retries: 3
 
 - name: Install slurmdbd package.
   ansible.builtin.apt:
@@ -12,3 +12,4 @@
     state: present
     update_cache: true
   when: 2 in install_code_list
+  retries: 3
