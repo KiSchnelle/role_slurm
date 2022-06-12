@@ -105,7 +105,7 @@
       ansible.builtin.debug:
         msg: "PASS | Slurm version {{ slurm_version }} will be installed. "
       when: slurm_version is defined
-    - name: Set slurm version to 20.11.9
+    - name: Set slurm version to 20.08.08
       ansible.builtin.set_fact:
-        slurm_version: 20.11.9
+        slurm_version: 20.08.08
       when: slurm_version is not defined
