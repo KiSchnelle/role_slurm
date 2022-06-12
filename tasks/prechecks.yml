@@ -4,16 +4,18 @@
     - name: Check for unsupported OS family and OS version.
       ansible.builtin.fail:
         msg: "FAIL | This role can only be run against CentOS 7 and 8 or Ubuntu 20. {{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported."
-      when: (ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '<')) or
-            (ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '>')) or
-            (ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '!='))
+      when:
+        (ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '<')) or
+        (ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '>')) or
+        (ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '!='))
 
     - name: Check OS version and family
       ansible.builtin.debug:
         msg: "PASS | This role can only be executed on CentOS 7 and 8 and Ubuntu 20 operating systems"
-      when: (ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==')) or
-            (ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==')) or
-            (ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '=='))
+      when:
+        (ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('7', '==')) or
+        (ansible_distribution|lower == 'centos' and ansible_distribution_major_version is version_compare('8', '==')) or
+        (ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version is version_compare('20', '=='))
 
 - name: Check if install_code_list is defined.
   block:
@@ -21,17 +23,16 @@
       ansible.builtin.fail:
         msg: "FAIL | Unsupported or undefined install code."
       when: install_code_list is not defined or (install_code_list|difference([1,2,3,4]))|length > 0
-  
+
     - name: Check if install_code_list is defined.
       ansible.builtin.debug:
         msg: "PASS |  Server will be installed as {{ item.name }}"
       with_items:
-        - {name: "Compute Node", code: 1}
-        - {name: "Database Node", code: 2}
-        - {name: "Controll Node", code: 3}
-        - {name: "Primary Controll Node", code: 4}
+        - { name: "Compute Node", code: 1 }
+        - { name: "Database Node", code: 2 }
+        - { name: "Controll Node", code: 3 }
+        - { name: "Primary Controll Node", code: 4 }
       when: item.code in install_code_list
-
 
 - name: Check installation method.
   block:
@@ -44,12 +45,11 @@
       ansible.builtin.debug:
         msg: "PASS | Slurm will be install using package manager. "
       when: package_install and ansible_distribution|lower == 'ubuntu'
-    
+
     - name: Check for package install.
       ansible.builtin.debug:
         msg: "PASS | Slurm will be installed using the tarball. "
       when: not package_install or package_install is not defined
-
 
 - name: Checks for primary controller installation.
   block:
@@ -57,13 +57,12 @@
       ansible.builtin.fail:
         msg: "FAIL | A needed variable for installing as primary controller is not given. "
       when:
-       - cluster_name is not defined or primary_controller_ip is not defined
-    
+        - cluster_name is not defined or primary_controller_ip is not defined
+
     - name: Set primary_controller_hostname and primary_controller_ip when installing as primary controller.
       ansible.builtin.set_fact:
         primary_controller_hostname: "{{ ansible_hostname }}"
   when: 4 in install_code_list
-
 
 - name: Check for primary controller variables.
   block:
@@ -73,7 +72,7 @@
       when:
         - primary_controller_hostname is not defined or primary_controller_ip is not defined or primary_ansible_user is not defined or
           primary_ansible_pw is not defined
-    
+
     - name: Check for primary controller variables.
       ansible.builtin.debug:
         msg: "PASS | Missing a needed variable defining the primary controller. "
@@ -82,27 +81,23 @@
           primary_ansible_pw is defined
   when: 4 not in install_code_list
 
-
 - name: Check if slurm_database_hostname is given when install not as database node.
   ansible.builtin.fail:
     msg: "slurm_database_hostname has to specified if not installing as database. "
-  when: 
+  when:
     - 2 not in install_code_list and slurm_database_hostname is not defined
-
 
 - name: Set slurm_database_hostname when installing as database node.
   ansible.builtin.set_fact:
     slurm_database_hostname: "{{ ansible_hostname }}"
   when: 2 in install_code_list
 
-
 # todo for mariadb only if not installed
 - name: Check if mariadb_root_password and mariadb_slurm_password are given when install code is 2.
   ansible.builtin.fail:
     msg: "mariadb_root_password and mariadb_slurm_password have to be specified when installing as database. "
-  when: 
+  when:
     - 2 in install_code_list and mariadb_root_password is not defined or 2 in install_code_list and mariadb_slurm_password is not defined
-
 
 - name: Check slurm version.
   block:
@@ -110,7 +105,7 @@
       ansible.builtin.debug:
         msg: "PASS | Slurm version {{ slurm_version }} will be installed. "
       when: slurm_version is defined
-    - name: Set slurm version to 20.11.8
+    - name: Set slurm version to 20.11.9
       ansible.builtin.set_fact:
-        slurm_version: 20.11.8
+        slurm_version: 20.11.9
       when: slurm_version is not defined
